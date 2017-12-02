@@ -1,24 +1,27 @@
+import NetworkNode from "./NetworkNode.js";
+
 export default class Network{
-    constructor(width, height){
+    constructor(width, height, game){
         this.width = width;
         this.height = height;
+        this.game = game;
         this.network = [width*height];
     }
 
     inside(x, y){
-        return x >= 0 && y >= 0 && x < width && y < height;
+        return x >= 0 && y >= 0 && x < this.width && y < this.height;
     }
 
     getNode(x, y){
         if (this.inside(x, y)){
-            return this.network[x + y* width];
+            return this.network[x + y* this.width];
         }else {
             return null;
         }        
     }
 
     setNode(x, y, networkNode){
-        this.network[x + y* width] = networkNode;
+        this.network[x + y* this.width] = networkNode;
     }
 
     addRoad(x, y){
@@ -28,10 +31,7 @@ export default class Network{
     
     removeRoad(x, y){
         var removeNode = this.getNode(x, y);
-        var connections = removeNode.getConnections();
         this.setNode(x, y, null);
-        connections.forEach(conn => {
-            conn.removeConnection(removeNode);
-        });
+        removeNode.destroy();
     }
 }

@@ -1,49 +1,93 @@
-class NetworkNode {
+export default class NetworkNode {
     constructor(x, y, network){
         this.x = x;
         this.y = y;
+        this.up = null;
+        this.down = null;
+        this.left = null;
+        this.right = null;
         this.network = network;
-        this.connections = [];
-        this.dirs = [ 
-            {
-                x = 0,
-                y = 1
-            },{
-                x = 0,
-                y = -1
-            },{
-                x = 1,
-                y = 0
-            },{
-                x = -1,
-                y = 0
-            }
-        ];
-        checkConnections();
+        this.sprite = network.game.add.sprite(x* 64, y * 64, 'circle');
+        //this.dirs = [[0,1],[0,-1],[1,0],[-1,0]];
+        this.checkConnections();
     }
     
     checkConnections(){
         //look around to check connections
-        this.dirs.forEach(dir => {
-            var node = this.network.getNode(dir.x, dir.y)
-            if (node){ 
-                this.connections.push(node);
-                this.node.addConnection(this);
-            }
-        })
+        var node;
+        //up
+        node = this.network.getNode(this.x +1, this.y);
+        if (node){
+            this.up = node;
+            node.setDown(this);
+        }
+        //down
+        node = this.network.getNode(this.x -1, this.y);
+        if (node){
+            this.down =node;
+            node.setUp(this);
+        }
+        //left
+        node = this.network.getNode(this.x, this.y -1);
+        if (node){
+            this.left =node;
+            node.setRight(this);
+        }
+        //right
+        node = this.network.getNode(this.x , this.y + 1);
+        if (node){
+            this.right =node;
+            node.setLeft(this);
+        }
 
     }
 
-    addConnection(networkNode){
-        this.connections.push(networkNode);
+    setUp(networkNode){
+        this.up = networkNode;
     }
 
-    removeConnection(networkNode){
-        this.connections = connections.splice(connections.indexOf(networkNode), 1);
+    setDown(networkNode){
+        this.down = networkNode;
     }
 
-    getConnections(){
-        return this.connections;
+    setLeft(networkNode){
+        this.left = networkNode;
+    }
+
+    setRight(networkNode){
+        this.right = networkNode;
+    }
+
+    destroy(){
+        if (this.up){
+            this.up.setDown(null);
+        }
+        if(this.down){
+            this.down.setUp(null);
+        }
+        if(this.left){
+            this.left.setRight(null);
+        }
+        if(this.right){
+            this.right.setLeft(null);
+        }
+        this.sprite.destroy()
+    }
+
+    getUp(){
+        return this.up;
+    }
+
+    getDown(){
+        return this.down;
+    }
+
+    getLeft(){
+        return this.left;
+    }
+
+    getRight(){
+        return this.right;
     }
 
 

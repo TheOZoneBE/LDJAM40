@@ -1,19 +1,43 @@
 import Network from "./structures/Network.js";
+import NetworkNode from "./structures/NetworkNode.js";
 
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
-var network = new Network(60,60);
+var network;
+var mouseLeft;
+var mouseRight;
 
 function preload(){
-
+	game.load.image('circle', 'src/assets/circle.png');
 }
 
 function create(){
-	console.log("works")
+	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
+
+	network = new Network(1280 / 64, 720/64, game);
+
+	mouseLeft = game.input.activePointer.leftButton;
+	mouseRight = game.input.activePointer.rightButton;
+	
+	network.addRoad(0,0);
+	network.addRoad(1,0)
 }
 
 function update(){
-
+	if (mouseLeft.isDown){
+		var x = Math.floor(game.input.x / 64);
+		var y = Math.floor(game.input.y / 64);
+		if (!network.getNode(x, y)){
+			network.addRoad(x, y);
+		}
+	}
+	if (mouseRight.isDown){
+		var x = Math.floor(game.input.x / 64);
+		var y = Math.floor(game.input.y / 64);
+		if (network.getNode(x, y)){
+			network.removeRoad(x, y);
+		}
+	}
 }
 
 function render(){

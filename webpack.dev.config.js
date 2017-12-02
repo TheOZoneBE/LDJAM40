@@ -15,19 +15,7 @@ module.exports = {
     module: {
         loaders: [
             { test: /pixi.js/, loader: "script" },
-        ]/*,
-        rules: [
-            {
-              test: /\.js$/,
-              exclude: /(node_modules|bower_components)/,
-              use: {
-                loader: 'babel-loader',
-                options: {
-                  presets: ['@babel/node6']
-                }
-              }
-            }
-        ]*/
+        ]
     },
     resolve: {
         alias: {
