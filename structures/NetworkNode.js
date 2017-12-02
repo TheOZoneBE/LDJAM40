@@ -24,18 +24,26 @@ class NetworkNode {
     
     checkConnections(){
         //look around to check connections
-        dirs.forEach(function(dir){
-            var node = network.getNode(dir.x, dir.y)
+        this.dirs.forEach(dir => {
+            var node = this.network.getNode(dir.x, dir.y)
             if (node){ 
-                connections.push(node);
-                node.addConnection(this);
+                this.connections.push(node);
+                this.node.addConnection(this);
             }
         })
 
     }
 
     addConnection(networkNode){
-        connections.push(networkNode);
+        this.connections.push(networkNode);
+    }
+
+    removeConnection(networkNode){
+        this.connections = connections.splice(connections.indexOf(networkNode), 1);
+    }
+
+    getConnections(){
+        return this.connections;
     }
 
 
