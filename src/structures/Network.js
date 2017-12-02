@@ -1,4 +1,4 @@
-export class Network{
+export default class Network{
     constructor(width, height){
         this.width = width;
         this.height = height;

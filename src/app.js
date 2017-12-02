@@ -1,10 +1,4 @@
-//Phaser
-//import * as PIXI from "phaser-ce/build/custom/pixi.js";
-//import * as p2 from "phaser-ce/build/custom/p2.js";
-import * as Phaser from "./phaser/phaser.min.js";
-
 import Network from "./structures/Network.js";
-
 
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
@@ -15,7 +9,7 @@ function preload(){
 }
 
 function create(){
-
+	console.log("works")
 }
 
 function update(){
