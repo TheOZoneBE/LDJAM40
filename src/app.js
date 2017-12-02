@@ -18,9 +18,6 @@ function create(){
 
 	mouseLeft = game.input.activePointer.leftButton;
 	mouseRight = game.input.activePointer.rightButton;
-	
-	network.addRoad(0,0);
-	network.addRoad(1,0)
 }
 
 function update(){

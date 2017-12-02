@@ -38,7 +38,7 @@ export default class RouteSolver {
                 return reconstructPath(cameFrom, current);
             }                
     
-            openSet.remove(current);
+            openSet.delete(current);
             closedSet.add(current);
     
             getNeighbors(current).forEach(neigbor => {
