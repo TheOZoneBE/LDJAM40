@@ -4,6 +4,8 @@
 	<meta charset="UTF-8" />
 	<title>Sprout</title>
 	<script type="text/javascript" src="phaser/phaser.min.js"></script>
+	<script type="text/javascript" scr="structures/Network.js"></script>
+	<script type="text/javascript" scr="structures/NetworkNode.js"></script>
 	<!--
 	<script type="text/javascript" src="TreeNode.js"></script>
 	<script type="text/javascript" src="Water.js"></script>
@@ -17,8 +19,12 @@
 <body>
 
 <script type="text/javascript">
+import {Network} from "./structures/Network.js";
+
 
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
+
+var network = new Network(60,60);
 
 function preload(){
 

@@ -1,4 +1,4 @@
-class Network{
+export class Network{
     constructor(width, height){
         this.width = width;
         this.height = height;
