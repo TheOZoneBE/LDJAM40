@@ -5,7 +5,10 @@ export default class Network{
         this.width = width;
         this.height = height;
         this.game = game;
-        this.network = [width*height];
+        this.network = [];
+        this.xOffset = 0;
+        this.yOffset = 0;
+        //this.network = [width*height];
     }
 
     inside(x, y){
@@ -25,8 +28,12 @@ export default class Network{
     }
 
     addRoad(x, y){
-        var newNode = new NetworkNode(x, y, this);
-        this.setNode(x, y, newNode);
+        if(this.inside(x, y)){
+            var newNode = new NetworkNode(x, y, this);
+            newNode.setOffset(this.xOffset, this.yOffset);
+            this.setNode(x, y, newNode);
+        }
+        
     }
     
     removeRoad(x, y){
@@ -41,5 +48,18 @@ export default class Network{
 
     downgradeRoad(x ,y){
         this.getNode(x, y).downgrade();
+    }
+
+    setNetworkOffset(xOffset, yOffset){
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        for (var i = 0; i < this.width; i++){
+            for(var j = 0; j < this.height; j++){
+                if (this.getNode(i, j)){
+                    this.getNode(i, j).setOffset(xOffset, yOffset);
+                }
+            }
+            
+        }
     }
 }

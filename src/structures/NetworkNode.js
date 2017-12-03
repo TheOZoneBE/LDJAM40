@@ -2,6 +2,8 @@ export default class NetworkNode {
     constructor(x, y, network){
         this.x = x;
         this.y = y;
+        this.xOffset = 0;
+        this.yOffset = 0;
         this.connections = new Set();
         this.network = network;
         this.level = 1;
@@ -67,8 +69,8 @@ export default class NetworkNode {
         var dir = this.getDir(networkNode);
         this.sprite[this.getIndex(dir[0], dir[1])]
          = this.network.game.add.sprite(
-             this.x * 64, 
-             this.y * 64, 
+             this.x * 64 + this.xOffset, 
+             this.y * 64 + this.yOffset, 
              this.conSprites[this.getIndex(dir[0], dir[1])][this.level]
         );
     }
@@ -88,12 +90,18 @@ export default class NetworkNode {
         if(this.level < 3){
             this.level++;
             this.sprite.mid.destroy();
-            this.sprite.mid = this.network.game.add.sprite(this.x * 64, this.y * 64, this.middleSprites[this.level]);
+            this.sprite.mid = this.network.game.add.sprite(
+                this.x * 64 + this.xOffset, 
+                this.y * 64 + this.yOffset,
+                this.middleSprites[this.level]);
             this.dirs.forEach(dir => {
                 var index = this.getIndex(dir[0], dir[1]);
                 if (this.sprite[index]){
                     this.sprite[index].destroy();
-                    this.sprite[index] = this.network.game.add.sprite(this.x * 64, this.y * 64, this.conSprites[index][this.level]);
+                    this.sprite[index] = this.network.game.add.sprite(
+                        this.x * 64 + this.xOffset, 
+                        this.y * 64 + this.yOffset, 
+                        this.conSprites[index][this.level]);
                 }
             });
         }        
@@ -103,14 +111,33 @@ export default class NetworkNode {
         if (this.level > 1){
             this.level--;
             this.sprite.mid.destroy();
-            this.sprite.mid = this.network.game.add.sprite(this.x * 64, this.y * 64, this.middleSprites[this.level]);
+            this.sprite.mid = this.network.game.add.sprite(
+                this.x * 64 + this.xOffset, 
+                this.y * 64 + this.yOffset, 
+                this.middleSprites[this.level]);
             this.dirs.forEach(dir => {
                 var index = this.getIndex(dir[0], dir[1]);
                 if (this.sprite[index]){
                     this.sprite[index].destroy();
-                    this.sprite[index] = this.network.game.add.sprite(this.x * 64, this.y * 64, this.conSprites[index][this.level]);
+                    this.sprite[index] = this.network.game.add.sprite(
+                        this.x * 64 + this.xOffset, 
+                        this.y * 64 + this.yOffset, 
+                        this.conSprites[index][this.level]);
                 }
             });
+        }
+    }
+
+    setOffset(xOffset, yOffset){
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.sprite.mid.x = this.x * 64 + xOffset;
+        this.sprite.mid.y = this.y * 64 + yOffset;
+        for (var i = 1; i < 5; i++){
+            if (this.sprite[i]){
+                this.sprite[i].x = this.x * 64 + xOffset;
+                this.sprite[i].y = this.y * 64 + yOffset;
+            }
         }
     }
 

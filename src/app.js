@@ -6,14 +6,21 @@ var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, creat
 var network;
 var mouseLeft;
 var mouseRight;
+var mouseMiddle;
 
 var add;
 var upgrade;
 
-var scrollScale = 1;
+
 var addMode = true;
 
 var xLast, yLast;
+
+var xOffset = 0;
+var yOffset = 0;
+var scrollScale = 1;
+var xDragPrev, yDragPrev;
+var start = true;
 
 function preload(){
 	game.load.image('small_middle', 'src/assets/small_middle.png');
@@ -55,9 +62,11 @@ function create(){
 
 	mouseLeft = game.input.activePointer.leftButton;
 	mouseRight = game.input.activePointer.rightButton;
+	mouseMiddle = game.input.activePointer.middleButton;
 
 	game.input.activePointer.leftButton.onUp.add(resetXY, this);
 	game.input.activePointer.rightButton.onUp.add(resetXY, this);
+	game.input.activePointer.middleButton.onUp.add(resetDrag, this);
 	
 
 	add = game.add.button(1190,20, 'add_road',switchToAdd);
@@ -72,8 +81,8 @@ function create(){
 
 function update(){
 	if (mouseLeft.isDown){
-		var x = Math.floor(game.input.x / 64);
-		var y = Math.floor(game.input.y / 64);
+		var x = Math.floor((game.input.x - xOffset) / 64);
+		var y = Math.floor((game.input.y - yOffset)/ 64);
 		if (addMode){
 			if (!network.getNode(x, y)){
 				network.addRoad(x, y);
@@ -87,10 +96,10 @@ function update(){
 		yLast = y;
 	}
 	if (mouseRight.isDown){
-		var x = Math.floor(game.input.x / 64);
-		var y = Math.floor(game.input.y / 64);
+		var x = Math.floor((game.input.x - xOffset) / 64);
+		var y = Math.floor((game.input.y - yOffset) / 64);
 		if (addMode){
-			if (!network.getNode(x, y)){
+			if (network.getNode(x, y)){
 				network.removeRoad(x, y);
 			}
 		}else {
@@ -100,12 +109,35 @@ function update(){
 		}
 		xLast =x;
 		yLast =y;
+	}
+	if (mouseMiddle.isDown){
+		if(start){
+			xDragPrev = game.input.x;
+			yDragPrev = game.input.y;
+			start = false;
+		}
+		else {
+			xOffset+= game.input.x - xDragPrev;
+			yOffset+= game.input.y - yDragPrev;
+
+			xOffset = Phaser.Math.clamp(xOffset, -320, 320);
+			yOffset = Phaser.Math.clamp(yOffset, -180, 180);
+
+			network.setNetworkOffset(xOffset, yOffset);
+
+			xDragPrev = game.input.x;
+			yDragPrev = game.input.y;
+		}
 	}	
 }
 
 function resetXY(){
 	xLast = -1;
 	yLast = -1;
+}
+
+function resetDrag(){
+	start = true;
 }
 
 function switchToAdd(){
