@@ -1,25 +1,70 @@
 export default class Car {
     
-    constructor(network, startX, startY, endX, endY){
+    constructor(network, startZone, endZone, id){
         this.network = network;
-        this.x = startX;
-        this.y = startY;
-        this.endX = endX;
-        this.endY = endY;
+        this.id = id;
         this.wait = 0;
+        this.zone = startZone;
+        this.endZone = endZone;
+        this.pathIndex = 0;
+        this.path = null;
         this.calculatePath();
-    }
-    
-    update(){
-        if (path){
-            //move over path
-
-        }
-        this.wait++;
     }
     
     //gets called every time network changes
     calculatePath(){
-        this.path = RouteSolver.shortestRoute(this.network, this.x, this.y, this.endX, this.endY);
+        this.path = RouteSolver.shortestRoute(
+            this.network, 
+            this.zone.node.x, 
+            this.zone.node.y, 
+            this.endZone.node.x, 
+            this.endZone.y
+        );
+        this.pathIndex = 0;
+    }
+
+    getNextZone(){
+        if (path){
+            if(this.zone.type === 'exit'){
+                var dir = this.getNextDir();
+                return this.getNextNode().getEntryZone(dir[0], dir[1]);
+            }
+            else if (this.zone.type === 'destination'){
+                var dir = this.getNextDir();
+                return this.zone.getTurnZone(dir[0], dir[1]);
+            }
+            else if (this.zone.type === 'turn') {
+                var dir = this.getNextDir();
+                return this.zone.getTurnZone(dir[0], dir[1]);
+            }
+            else {
+                return this.zone.getNextZone();
+            }
+        }
+        else {
+            return null;
+        }
+        
+    }
+
+    getNextNode(){
+        this.pathIndex++;
+        return this.path[this.pathIndex];
+    }
+
+    getNextDir(){
+        var cur = this.path[this.pathIndex];
+        var next = this.path[this.pathIndex + 1];
+        return [next.x -cur.x,next.y - cur.y];
+    }
+
+    getZone(){
+        return this.zone;
+    }
+
+    moveTo(newZone){
+        this.zone.removeCar(this);
+        this.zone = newZone;
+        this.zone.addCar(this);
     }
 }

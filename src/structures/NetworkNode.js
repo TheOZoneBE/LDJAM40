@@ -148,6 +148,18 @@ export default class NetworkNode {
         }
     }
 
+    getEntryZone(x, y){
+        this.entryMap[this.getIndex(x, y)];
+    }
+
+    getTurnZone(x, y){
+        this.turnMap[this.getIndex(x, y)];
+    }
+
+    getNextZone(zone){
+        this.zoneMap.get(zone);
+    }
+
     destroy(){
         this.connections.forEach(con => {
             con.removeConnection(this);
