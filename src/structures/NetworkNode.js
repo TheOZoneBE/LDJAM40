@@ -1,20 +1,61 @@
 export default class NetworkNode {
-    //TODO remov up,down left, right by set
     constructor(x, y, network){
         this.x = x;
         this.y = y;
         this.connections = new Set();
         this.network = network;
-        this.sprite = network.game.add.sprite(x* 64, y * 64, 'circle');
+        this.level = 1;
+        this.middleSprites = {
+            1: 'small_middle',
+            2: 'medium_middle',
+            3: 'large_middle'
+        };
+        this.sprite = {
+            mid: network.game.add.sprite(x* 64, y * 64, this.middleSprites[this.level]),
+            1: null,
+            2: null,
+            3: null,
+            4: null
+        };
         this.dirs = [[0,1],[0,-1],[1,0],[-1,0]];
+        this.conSprites = {
+            1: {
+                1: 'small_right',
+                2: 'medium_right',
+                3: 'large_right'
+            },
+            2: {
+                1: 'small_down',
+                2: 'medium_down',
+                3: 'large_down'
+            },
+            3: {
+                1: 'small_left',
+                2: 'medium_left',
+                3: 'large_left'
+            },
+            4: {
+                1: 'small_up',
+                2: 'medium_up',
+                3: 'large_up'
+            }            
+        };
         this.checkConnections();
+    }
+
+    getIndex(x, y){
+        return Math.abs(x)*(2 - x) + Math.abs(y)*(3 - y);
+    }
+
+    getDir(con){
+        return [con.x -this.x,con.y - this.y];
     }
     
     checkConnections(){
         this.dirs.forEach(dir => {
             var node = this.network.getNode(this.x + dir[0], this.y + dir[1]);
             if (node){
-                this.connections.add(node);
+                this.addConnection(node);
                 node.addConnection(this);
             }
         });
@@ -23,22 +64,41 @@ export default class NetworkNode {
     addConnection(networkNode){
         console.log(this.x + ", " + this.y + ": added: " + networkNode.x + ", " + networkNode.y);
         this.connections.add(networkNode);
+        var dir = this.getDir(networkNode);
+        this.sprite[this.getIndex(dir[0], dir[1])]
+         = this.network.game.add.sprite(
+             this.x * 64, 
+             this.y * 64, 
+             this.conSprites[this.getIndex(dir[0], dir[1])][this.level]
+        );
     }
 
     removeConnection(networkNode){
         console.log(this.x + ", " + this.y + ": removed: " + networkNode.x + ", " + networkNode.y);
         this.connections.delete(networkNode);
-    }
+        var dir = this.getDir(networkNode);
+        this.sprite[this.getIndex(dir[0], dir[1])].destroy();
+    }   
 
     getConnections(){
         return this.connections;
+    }
+
+    upgrade(){
+        this.level++;
+        //TODO update sprite
     }
 
     destroy(){
         this.connections.forEach(con => {
             con.removeConnection(this);
         })
-        this.sprite.destroy()
+        this.sprite.mid.destroy()
+        this.dirs.forEach(dir => {
+            if (this.sprite[this.getIndex(dir[0], dir[1])]){
+                this.sprite[this.getIndex(dir[0], dir[1])].destroy();
+            }
+        })
     }
 
 }

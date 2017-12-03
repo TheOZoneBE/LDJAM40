@@ -8,7 +8,29 @@ var mouseLeft;
 var mouseRight;
 
 function preload(){
-	game.load.image('circle', 'src/assets/circle.png');
+	game.load.image('small_middle', 'src/assets/small_middle.png');
+	game.load.image('small_left', 'src/assets/small_left.png');
+	game.load.image('small_right', 'src/assets/small_right.png');
+	game.load.image('small_up', 'src/assets/small_up.png');
+	game.load.image('small_down', 'src/assets/small_down.png');
+	game.load.image('medium_middle', 'src/assets/medium_middle.png');
+	game.load.image('medium_left', 'src/assets/medium_left.png');
+	game.load.image('medium_right', 'src/assets/medium_right.png');
+	game.load.image('medium_up', 'src/assets/medium_up.png');
+	game.load.image('medium_down', 'src/assets/medium_down.png');
+	game.load.image('large_middle', 'src/assets/large_middle.png');
+	game.load.image('large_left', 'src/assets/large_left.png');
+	game.load.image('large_right', 'src/assets/large_right.png');
+	game.load.image('large_up', 'src/assets/large_up.png');
+	game.load.image('large_down', 'src/assets/large_down.png');
+	game.load.image('play', 'src/assets/play.png');
+	game.load.image('pause', 'src/assets/pause.png');
+	game.load.image('add_road', 'src/assets/add_road.png');
+	game.load.image('upgrade_road', 'src/assets/upgrade_road.png');
+	game.load.image('house', 'src/assets/house.png');
+	game.load.image('car1', 'src/assets/car1.png');
+	game.load.image('car2', 'src/assets/car2.png');
+	game.load.image('car3', 'src/assets/car3.png');
 }
 
 function create(){
