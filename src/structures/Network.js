@@ -34,4 +34,12 @@ export default class Network{
         this.setNode(x, y, null);
         removeNode.destroy();
     }
+
+    upgradeRoad(x, y){
+        this.getNode(x, y).upgrade();
+    }
+
+    downgradeRoad(x ,y){
+        this.getNode(x, y).downgrade();
+    }
 }

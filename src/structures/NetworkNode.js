@@ -85,8 +85,33 @@ export default class NetworkNode {
     }
 
     upgrade(){
-        this.level++;
-        //TODO update sprite
+        if(this.level < 3){
+            this.level++;
+            this.sprite.mid.destroy();
+            this.sprite.mid = this.network.game.add.sprite(this.x * 64, this.y * 64, this.middleSprites[this.level]);
+            this.dirs.forEach(dir => {
+                var index = this.getIndex(dir[0], dir[1]);
+                if (this.sprite[index]){
+                    this.sprite[index].destroy();
+                    this.sprite[index] = this.network.game.add.sprite(this.x * 64, this.y * 64, this.conSprites[index][this.level]);
+                }
+            });
+        }        
+    }
+
+    downgrade(){
+        if (this.level > 1){
+            this.level--;
+            this.sprite.mid.destroy();
+            this.sprite.mid = this.network.game.add.sprite(this.x * 64, this.y * 64, this.middleSprites[this.level]);
+            this.dirs.forEach(dir => {
+                var index = this.getIndex(dir[0], dir[1]);
+                if (this.sprite[index]){
+                    this.sprite[index].destroy();
+                    this.sprite[index] = this.network.game.add.sprite(this.x * 64, this.y * 64, this.conSprites[index][this.level]);
+                }
+            });
+        }
     }
 
     destroy(){
@@ -95,10 +120,11 @@ export default class NetworkNode {
         })
         this.sprite.mid.destroy()
         this.dirs.forEach(dir => {
-            if (this.sprite[this.getIndex(dir[0], dir[1])]){
-                this.sprite[this.getIndex(dir[0], dir[1])].destroy();
+            var index = this.getIndex(dir[0], dir[1])
+            if (this.sprite[index]){
+                this.sprite[index].destroy();
             }
-        })
+        });
     }
 
 }

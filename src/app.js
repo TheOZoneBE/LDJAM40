@@ -7,6 +7,14 @@ var network;
 var mouseLeft;
 var mouseRight;
 
+var add;
+var upgrade;
+
+var scrollScale = 1;
+var addMode = true;
+
+var xLast, yLast;
+
 function preload(){
 	game.load.image('small_middle', 'src/assets/small_middle.png');
 	game.load.image('small_left', 'src/assets/small_left.png');
@@ -34,29 +42,88 @@ function preload(){
 }
 
 function create(){
+	game.stage.backgroundColor = "#66AACC";
+	/*
+	game.world.setBounds(-320, -180, 1600, 900);
+	game.camera.x = game.width/2;
+	game.camera.y = game.height/2;
+	game.input.mouse.mouseWheelCallback = mouseScroll;
+	*/
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 
 	network = new Network(1280 / 64, 720/64, game);
 
 	mouseLeft = game.input.activePointer.leftButton;
 	mouseRight = game.input.activePointer.rightButton;
+
+	game.input.activePointer.leftButton.onUp.add(resetXY, this);
+	game.input.activePointer.rightButton.onUp.add(resetXY, this);
+	
+
+	add = game.add.button(1190,20, 'add_road',switchToAdd);
+	add.fixedToCamera = true;
+	add.scale.setTo(2,2);
+	add.smoothed = false;
+	upgrade = game.add.button(1190,100, 'upgrade_road',switchToUpgrade);
+	upgrade.fixedToCamera = true;
+	upgrade.scale.setTo(2,2);
+	upgrade.smoothed = false;
 }
 
 function update(){
 	if (mouseLeft.isDown){
 		var x = Math.floor(game.input.x / 64);
 		var y = Math.floor(game.input.y / 64);
-		if (!network.getNode(x, y)){
-			network.addRoad(x, y);
+		if (addMode){
+			if (!network.getNode(x, y)){
+				network.addRoad(x, y);
+			}
+		}else {
+			if (network.getNode(x, y) && (x != xLast || y != yLast)){
+				network.upgradeRoad(x, y);
+			}
 		}
+		xLast = x;
+		yLast = y;
 	}
 	if (mouseRight.isDown){
 		var x = Math.floor(game.input.x / 64);
 		var y = Math.floor(game.input.y / 64);
-		if (network.getNode(x, y)){
-			network.removeRoad(x, y);
+		if (addMode){
+			if (!network.getNode(x, y)){
+				network.removeRoad(x, y);
+			}
+		}else {
+			if (network.getNode(x, y)&& (x != xLast || y != yLast)){
+				network.downgradeRoad(x, y);
+			}
 		}
+		xLast =x;
+		yLast =y;
+	}	
+}
+
+function resetXY(){
+	xLast = -1;
+	yLast = -1;
+}
+
+function switchToAdd(){
+	addMode = true;
+}
+
+function switchToUpgrade(){
+	addMode = false;
+}
+
+function mouseScroll(event){
+	if (game.input.mouse.wheelDelta === Phaser.Mouse.WHEEL_UP){
+		scrollScale+=0.05;
+	}else {
+		scrollScale-=0.05;
 	}
+	scrollScale = Phaser.Math.clamp(scrollScale, 0.8, 3)
+	game.world.scale.set(scrollScale);
 }
 
 function render(){
