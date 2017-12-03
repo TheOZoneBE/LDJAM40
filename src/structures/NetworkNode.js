@@ -30,6 +30,10 @@ export default class NetworkNode {
         this.connections.delete(networkNode);
     }
 
+    getConnections(){
+        return this.connections;
+    }
+
     destroy(){
         this.connections.forEach(con => {
             con.removeConnection(this);

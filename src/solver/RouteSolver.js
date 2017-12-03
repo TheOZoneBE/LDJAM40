@@ -41,7 +41,7 @@ export default class RouteSolver {
             openSet.delete(current);
             closedSet.add(current);
     
-            getNeighbors(current).forEach(neigbor => {
+            current.getConnections().forEach(neigbor => {
                 if (closedSet.has(neighbor)){
                     return;		// Ignore the neighbor which is already evaluated.
                 }
