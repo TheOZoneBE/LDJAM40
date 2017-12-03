@@ -1,14 +1,14 @@
 import NetworkNode from "./NetworkNode.js";
 
 export default class Network{
-    constructor(width, height, game){
+    constructor(width, height, game, group){
         this.width = width;
         this.height = height;
         this.game = game;
+        this.group = group;
         this.network = [];
         this.xOffset = 0;
         this.yOffset = 0;
-        //this.network = [width*height];
     }
 
     inside(x, y){

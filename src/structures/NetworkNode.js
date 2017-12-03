@@ -19,6 +19,7 @@ export default class NetworkNode {
             3: null,
             4: null
         };
+        network.group.add(this.sprite.mid);
         this.dirs = [[0,1],[0,-1],[1,0],[-1,0]];
         this.conSprites = {
             1: {
@@ -67,12 +68,14 @@ export default class NetworkNode {
         console.log(this.x + ", " + this.y + ": added: " + networkNode.x + ", " + networkNode.y);
         this.connections.add(networkNode);
         var dir = this.getDir(networkNode);
-        this.sprite[this.getIndex(dir[0], dir[1])]
-         = this.network.game.add.sprite(
+        
+        var con = this.network.game.add.sprite(
              this.x * 64 + this.xOffset, 
              this.y * 64 + this.yOffset, 
              this.conSprites[this.getIndex(dir[0], dir[1])][this.level]
         );
+        this.network.group.add(con)
+        this.sprite[this.getIndex(dir[0], dir[1])] = con;
     }
 
     removeConnection(networkNode){
@@ -94,6 +97,7 @@ export default class NetworkNode {
                 this.x * 64 + this.xOffset, 
                 this.y * 64 + this.yOffset,
                 this.middleSprites[this.level]);
+            this.network.group.add(this.sprite.mid);
             this.dirs.forEach(dir => {
                 var index = this.getIndex(dir[0], dir[1]);
                 if (this.sprite[index]){
@@ -102,6 +106,7 @@ export default class NetworkNode {
                         this.x * 64 + this.xOffset, 
                         this.y * 64 + this.yOffset, 
                         this.conSprites[index][this.level]);
+                    this.network.group.add(this.sprite[index]);
                 }
             });
         }        
@@ -115,6 +120,7 @@ export default class NetworkNode {
                 this.x * 64 + this.xOffset, 
                 this.y * 64 + this.yOffset, 
                 this.middleSprites[this.level]);
+            this.network.group.add(this.sprite.mid);
             this.dirs.forEach(dir => {
                 var index = this.getIndex(dir[0], dir[1]);
                 if (this.sprite[index]){
@@ -123,6 +129,7 @@ export default class NetworkNode {
                         this.x * 64 + this.xOffset, 
                         this.y * 64 + this.yOffset, 
                         this.conSprites[index][this.level]);
+                    this.network.group.add(this.sprite[index]);
                 }
             });
         }

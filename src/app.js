@@ -1,5 +1,6 @@
 import Network from "./structures/Network.js";
 import NetworkNode from "./structures/NetworkNode.js";
+import Background from "./structures/Background.js";
 
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
@@ -21,6 +22,10 @@ var yOffset = 0;
 var scrollScale = 1;
 var xDragPrev, yDragPrev;
 var start = true;
+var background;
+var topBar;
+
+var gameGroup, UIGroup;
 
 function preload(){
 	game.load.image('small_middle', 'src/assets/small_middle.png');
@@ -46,9 +51,22 @@ function preload(){
 	game.load.image('car1', 'src/assets/car1.png');
 	game.load.image('car2', 'src/assets/car2.png');
 	game.load.image('car3', 'src/assets/car3.png');
+	game.load.image('background', 'src/assets/background.png');
 }
 
 function create(){
+	gameGroup = game.add.group();
+	UIGroup = game.add.group();
+	background = new Background(1280/64, 720/64, game, gameGroup);
+	topBar = game.add.graphics(0,0);
+	topBar.beginFill(0x7a8699);
+	topBar.lineTo(1280,0);
+	topBar.lineTo(1280,52);
+	topBar.lineTo(0,52);
+	topBar.lineTo(0,0);
+	topBar.endFill();
+	UIGroup.add(topBar);
+
 	game.stage.backgroundColor = "#66AACC";
 	/*
 	game.world.setBounds(-320, -180, 1600, 900);
@@ -58,7 +76,7 @@ function create(){
 	*/
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 
-	network = new Network(1280 / 64, 720/64, game);
+	network = new Network(1280 / 64, 720/64, game, gameGroup);
 
 	mouseLeft = game.input.activePointer.leftButton;
 	mouseRight = game.input.activePointer.rightButton;
@@ -69,46 +87,50 @@ function create(){
 	game.input.activePointer.middleButton.onUp.add(resetDrag, this);
 	
 
-	add = game.add.button(1190,20, 'add_road',switchToAdd);
+	add = game.add.button(1192,10, 'add_road',switchToAdd);
 	add.fixedToCamera = true;
-	add.scale.setTo(2,2);
 	add.smoothed = false;
-	upgrade = game.add.button(1190,100, 'upgrade_road',switchToUpgrade);
+	UIGroup.add(add);
+	upgrade = game.add.button(1234,10, 'upgrade_road',switchToUpgrade);
 	upgrade.fixedToCamera = true;
-	upgrade.scale.setTo(2,2);
 	upgrade.smoothed = false;
+	UIGroup.add(upgrade);
 }
 
 function update(){
 	if (mouseLeft.isDown){
-		var x = Math.floor((game.input.x - xOffset) / 64);
-		var y = Math.floor((game.input.y - yOffset)/ 64);
-		if (addMode){
-			if (!network.getNode(x, y)){
-				network.addRoad(x, y);
+		if (game.input.y > 52){
+			var x = Math.floor((game.input.x - xOffset) / 64);
+			var y = Math.floor((game.input.y - yOffset)/ 64);
+			if (addMode){
+				if (!network.getNode(x, y)){
+					network.addRoad(x, y);
+				}
+			}else {
+				if (network.getNode(x, y) && (x != xLast || y != yLast)){
+					network.upgradeRoad(x, y);
+				}
 			}
-		}else {
-			if (network.getNode(x, y) && (x != xLast || y != yLast)){
-				network.upgradeRoad(x, y);
-			}
-		}
-		xLast = x;
-		yLast = y;
+			xLast = x;
+			yLast = y;
+		}		
 	}
 	if (mouseRight.isDown){
-		var x = Math.floor((game.input.x - xOffset) / 64);
-		var y = Math.floor((game.input.y - yOffset) / 64);
-		if (addMode){
-			if (network.getNode(x, y)){
-				network.removeRoad(x, y);
+		if (game.input.y > 52){
+			var x = Math.floor((game.input.x - xOffset) / 64);
+			var y = Math.floor((game.input.y - yOffset) / 64);
+			if (addMode){
+				if (network.getNode(x, y)){
+					network.removeRoad(x, y);
+				}
+			}else {
+				if (network.getNode(x, y)&& (x != xLast || y != yLast)){
+					network.downgradeRoad(x, y);
+				}
 			}
-		}else {
-			if (network.getNode(x, y)&& (x != xLast || y != yLast)){
-				network.downgradeRoad(x, y);
-			}
-		}
-		xLast =x;
-		yLast =y;
+			xLast =x;
+			yLast =y;
+		}		
 	}
 	if (mouseMiddle.isDown){
 		if(start){
@@ -124,6 +146,7 @@ function update(){
 			yOffset = Phaser.Math.clamp(yOffset, -180, 180);
 
 			network.setNetworkOffset(xOffset, yOffset);
+			background.setOffset(xOffset, yOffset);
 
 			xDragPrev = game.input.x;
 			yDragPrev = game.input.y;
