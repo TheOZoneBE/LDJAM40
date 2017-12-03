@@ -1,9 +1,14 @@
 export default class Zone {
     //type =  turn, exit, destination, road: dest == turn?
-    constructor(space, node, type){
+    constructor(space, node, nodeX, nodeY, type, index, renderer){
         this.space = space;
         this.node = node;
+        this.nodeX = nodeX;
+        this.nodeY = nodeY;
         this.type = type;
+        this.index = index;
+        this.renderer = renderer:
+        this.renderer.addZone(this);
         this.cars = new Set();
     }
 
@@ -31,5 +36,9 @@ export default class Zone {
 
     getTurnZone(x, y){
         return this.node.getTurnZone(x, y);
+    }
+    
+    destroy(){
+        this.renderer.removeZone(this);
     }
 }

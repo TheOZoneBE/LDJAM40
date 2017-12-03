@@ -1,3 +1,5 @@
+import ZoneManager from './structures/ZoneManager.js';
+
 export default class NetworkNode {
     constructor(x, y, network){
         this.x = x;
@@ -43,6 +45,7 @@ export default class NetworkNode {
                 3: 'large_up'
             }            
         };
+        this.zoneManager = new ZoneManager(this, network.zoneRenderer);
         this.checkConnections();
     }
 
@@ -76,6 +79,9 @@ export default class NetworkNode {
         );
         this.network.group.add(con)
         this.sprite[this.getIndex(dir[0], dir[1])] = con;
+
+        //UPDATE ZONES
+        this.zoneManager.addConnection(networkNode);
     }
 
     removeConnection(networkNode){
@@ -83,6 +89,9 @@ export default class NetworkNode {
         this.connections.delete(networkNode);
         var dir = this.getDir(networkNode);
         this.sprite[this.getIndex(dir[0], dir[1])].destroy();
+
+        //UPDATE ZONES
+        this.zoneManager.removeConnection(networkNode);
     }   
 
     getConnections(){
@@ -109,6 +118,9 @@ export default class NetworkNode {
                     this.network.group.add(this.sprite[index]);
                 }
             });
+
+            //UPDATE ZONES
+            this.zoneManager.upgrade();
         }        
     }
 
@@ -132,6 +144,9 @@ export default class NetworkNode {
                     this.network.group.add(this.sprite[index]);
                 }
             });
+
+            //UPDATE ZONES
+            this.zoneManager.downgrade();
         }
     }
 
@@ -149,15 +164,15 @@ export default class NetworkNode {
     }
 
     getEntryZone(x, y){
-        this.entryMap[this.getIndex(x, y)];
+        this.zoneManager.entryMap[this.getIndex(x, y)];
     }
 
     getTurnZone(x, y){
-        this.turnMap[this.getIndex(x, y)];
+        this.zoneManager.turnMap[this.getIndex(x, y)];
     }
 
     getNextZone(zone){
-        this.zoneMap.get(zone);
+        this.zoneManager.zoneMap.get(zone);
     }
 
     destroy(){
@@ -171,6 +186,9 @@ export default class NetworkNode {
                 this.sprite[index].destroy();
             }
         });
+
+        //UPDATE ZONES
+        this.zoneManager.destroy();
     }
 
 }

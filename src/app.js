@@ -26,6 +26,8 @@ var topBar;
 
 var gameGroup, UIGroup;
 
+var zoneRenderer;
+
 function preload(){
 	game.load.image('small_middle', 'src/assets/small_middle.png');
 	game.load.image('small_left', 'src/assets/small_left.png');
@@ -74,8 +76,8 @@ function create(){
 	game.input.mouse.mouseWheelCallback = mouseScroll;
 	*/
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
-
-	network = new Network(1280 / 64, 720/64, game, gameGroup);
+	zoneRenderer = new ZoneRenderer(gameGroup);
+	network = new Network(1280 / 64, 720/64, game, gameGroup, zoneRenderer);
 
 	mouseLeft = game.input.activePointer.leftButton;
 	mouseRight = game.input.activePointer.rightButton;

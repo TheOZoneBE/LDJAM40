@@ -24,6 +24,7 @@ export default class Car {
     }
 
     getNextZone(){
+        //TODO if end return end zone
         if (path){
             if(this.zone.type === 'exit'){
                 var dir = this.getNextDir();
@@ -48,6 +49,7 @@ export default class Car {
     }
 
     getNextNode(){
+        
         this.pathIndex++;
         return this.path[this.pathIndex];
     }
