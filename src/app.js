@@ -2,6 +2,7 @@ import Network from "./structures/Network.js";
 import NetworkNode from "./structures/NetworkNode.js";
 import Background from "./structures/Background.js";
 import ZonesRenderer from "./renderer/ZonesRenderer";
+import Car from "./structures/Car.js";
 
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
@@ -25,7 +26,7 @@ var start = true;
 var background;
 var topBar;
 
-var gameGroup, UIGroup;
+var roadGroup, carGroup, UIGroup;
 
 var zonesRenderer;
 
@@ -57,9 +58,10 @@ function preload(){
 }
 
 function create(){
-	gameGroup = game.add.group();
+	roadGroup = game.add.group();
+	carGroup = game.add.group();
 	UIGroup = game.add.group();
-	background = new Background(1280/64, 720/64, game, gameGroup);
+	background = new Background(1280/64, 720/64, game, roadGroup);
 	topBar = game.add.graphics(0,0);
 	topBar.beginFill(0x7a8699);
 	topBar.lineTo(1280,0);
@@ -77,8 +79,8 @@ function create(){
 	game.input.mouse.mouseWheelCallback = mouseScroll;
 	*/
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
-	zonesRenderer = new ZonesRenderer(gameGroup);
-	network = new Network(1280 / 64, 720/64, game, gameGroup, zonesRenderer);
+	zonesRenderer = new ZonesRenderer(game, carGroup);
+	network = new Network(1280 / 64, 720/64, game, roadGroup, zonesRenderer);
 
 	mouseLeft = game.input.activePointer.leftButton;
 	mouseRight = game.input.activePointer.rightButton;
@@ -97,6 +99,29 @@ function create(){
 	upgrade.fixedToCamera = true;
 	upgrade.smoothed = false;
 	UIGroup.add(upgrade);
+
+	debug()
+}
+
+function debug(){
+	network.addRoad(1,1);
+	network.addRoad(0,1);
+	network.addRoad(2,1);
+	network.addRoad(1,0);
+	network.addRoad(1,2);
+	network.upgradeRoad(1,1);
+	network.upgradeRoad(1,1);
+	var node = network.getNode(1,1);
+	
+	var id = 1;
+	var entry = node.zoneManager.entryMap[id];
+	var turn = node.zoneManager.turnMap[id];
+	var next = node.zoneManager.zoneMap.get(turn);
+	
+	var car1 = new Car(network, entry, entry, 1,'car1');
+	var car2 = new Car(network, entry, entry, 2,'car2');
+	var car3 = new Car(network, entry, entry, 3, 'car3');
+	var car3 = new Car(network, turn, entry, 4, 'car1');
 }
 
 function update(){
@@ -149,6 +174,7 @@ function update(){
 
 			network.setNetworkOffset(xOffset, yOffset);
 			background.setOffset(xOffset, yOffset);
+			zonesRenderer.setOffset(xOffset, yOffset);
 
 			xDragPrev = game.input.x;
 			yDragPrev = game.input.y;

@@ -1,7 +1,8 @@
 import ZoneRenderer from './ZoneRenderer.js'
 
 export default class ZonesRenderer {
-    constructor(group){
+    constructor(game, group){
+        this.game = game;
         this.group = group;
         this.zones = new Map();
         this.xOffset = 0;
@@ -19,7 +20,7 @@ export default class ZonesRenderer {
     }
 
     addZone(zone){
-        var zr = new ZoneRenderer(zone);
+        var zr = new ZoneRenderer(zone, this.xOffset, this.yOffset, this.game, this.group);
         this.zones.set(zone, zr);
         return zr;
     }

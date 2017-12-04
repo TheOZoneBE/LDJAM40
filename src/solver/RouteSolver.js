@@ -17,25 +17,25 @@ export default class RouteSolver {
         // For each node, which node it can most efficiently be reached from.
         // If a node can be reached from many nodes, cameFrom will eventually contain the
         // most efficient previous step.
-        var cameFrom;
+        var cameFrom = new Map();
     
         // For each node, the cost of getting from the start node to that node.
-        var gScore; //map with default value of Infinity
+        var gScore = new Map(); //map with default value of Infinity
     
         // The cost of going from start to start is zero.
-        gScore[start] = 0;
+        gScore.set(start, 0);
     
         // For each node, the total cost of getting from the start node to the goal
         // by passing by that node. That value is partly known, partly heuristic.
-        var fScore; //map with default value of Infinity
+        var fScore = new Map(); //map with default value of Infinity
     
         // For the first node, that value is completely heuristic.
-        fScore[start] = estimateCost(start, goal);
+        fScore.set(start, this.estimateCost(start, goal));
     
         while (openSet.size != 0){
-            current = getLowest(fscore, openSet); //the node in openSet having the lowest fScore[] value
+            var current = this.getLowest(fScore, openSet); //the node in openSet having the lowest fScore[] value
             if (current === goal){
-                return reconstructPath(cameFrom, current);
+                return this.reconstructPath(cameFrom, current);
             }                
     
             openSet.delete(current);
@@ -53,16 +53,16 @@ export default class RouteSolver {
                 
                 // The distance from start to a neighbor
                 //the "dist_between" function may vary as per the solution requirements.
-                var tentative_gScore = gScore[current] + distBetween(current, neighbor);
-                if (tentative_gScore >= gScore[neighbor]){
+                var tentative_gScore = gScore.get(current) + this.distBetween(current, neighbor);
+                if (tentative_gScore >= gScore.get(neighbor)){
                     return;		// This is not a better path.
                 }
                     
 
                 // This path is the best until now. Record it!
-                cameFrom[neighbor] = current
-                gScore[neighbor] = tentative_gScore
-                fScore[neighbor] = gScore[neighbor] + estimateCost(neighbor, goal) 
+                cameFrom.set(neighbor, current);
+                gScore.set(neighbor, tentative_gScore);
+                fScore.set(neighbor, gScore[neighbor] + this.estimateCost(neighbor, goal)); 
             });
                 
         }
@@ -70,12 +70,11 @@ export default class RouteSolver {
         return null;
     }
 
-    distBetween(current, neighbor){
-        //TODO take type into account
-        return 1;
+    static distBetween(current, neighbor){        
+        return -2 * neighbor.level + 9;
     }
 
-    getLowest(gscore, openSet){
+    static getLowest(gscore, openSet){
         var min = -1;
         var minNode;
         openSet.forEach(open => {
@@ -87,15 +86,16 @@ export default class RouteSolver {
         return minNode;
     }
 
-    estimateCost(start, end){
+    static estimateCost(start, end){
         return Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y -end.y, 2));
     }
 
-    reconstructPath(cameFrom, current){
-        totalPath = [current];
+    static reconstructPath(cameFrom, current){
+        var totalPath = [current];
         while (cameFrom.has(current)){
             current = cameFrom[current];
             totalPath.push(current);
+        }
         return totalPath;
     }
 }

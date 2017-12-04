@@ -1,15 +1,17 @@
 export default class ZoneRenderer{
-    constructor(zone, xOffset, yOffset){
+    constructor(zone, xOffset, yOffset, game, group){
         this.zone = zone;
+        this.game = game;
+        this.group = group;
         this.carIndex = new Map();
-        this.carSprites;
+        this.carSprites = [];
         this.xOffset = xOffset;
         this.yOffset = yOffset;
     }
 
     getFirstIndex(){
-        for (var i = 0; i < zone.space; i++){
-            if (!carSprites[i]){
+        for (var i = 0; i < this.zone.space; i++){
+            if (!this.carSprites[i]){
                 return i;
             }
         }
@@ -19,9 +21,9 @@ export default class ZoneRenderer{
         var index = this.getFirstIndex();
         var intOffset = this.getCarOffset(index);
         this.carIndex.set(car, index);
-        this.carSprites[index] = game.add.sprite(
-            this.zone.x * 64 + (this.zone.nodeX + intOffset[0]) * 8 + xOffset,
-            this.zone.y * 64 + (this.zone.nodeY + intOffset[1]) * 8 + yOffset,
+        this.carSprites[index] = this.game.add.sprite(
+            this.zone.node.x * 64 + (this.zone.nodeX + intOffset[0]) * 8 + this.xOffset,
+            this.zone.node.y * 64 + (this.zone.nodeY + intOffset[1]) * 8 + this.yOffset,
             car.spriteName);
         this.group.add(this.carSprites[index]);
         //TODO rotation
@@ -30,7 +32,8 @@ export default class ZoneRenderer{
     removeCar(car){
         var index = this.carIndex.get(car);
         this.carIndex.delete(car);
-        this.carSprites[i].destroy();
+        this.carSprites[index].destroy();
+        this.carSprites[index] = null;
     }
 
     getCarRotation(){
@@ -110,9 +113,9 @@ export default class ZoneRenderer{
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         for(let index of this.carIndex.values()){
-            var intOffset = getCarOffset(index);
-            this.carSprites[index].x = this.zone.x * 64 + (this.zone.nodeX + intOffset[0]) * 8 + xOffset;
-            this.carSprites[index].y = this.zone.y * 64 + (this.zone.nodeY + intOffset[1]) * 8 + yOffset;
+            var intOffset = this.getCarOffset(index);
+            this.carSprites[index].x = this.zone.node.x * 64 + (this.zone.nodeX + intOffset[0]) * 8 + xOffset;
+            this.carSprites[index].y = this.zone.node.y * 64 + (this.zone.nodeY + intOffset[1]) * 8 + yOffset;
         }
     }
 

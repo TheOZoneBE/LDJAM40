@@ -89,6 +89,7 @@ export default class NetworkNode {
         this.connections.delete(networkNode);
         var dir = this.getDir(networkNode);
         this.sprite[this.getIndex(dir[0], dir[1])].destroy();
+        this.sprite[this.getIndex(dir[0], dir[1])] = null;
 
         //UPDATE ZONES
         this.zoneManager.removeConnection(networkNode);

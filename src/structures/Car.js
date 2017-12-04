@@ -1,3 +1,5 @@
+import RouteSolver from './../solver/RouteSolver.js'
+
 export default class Car {
     
     constructor(network, startZone, endZone, id, spriteName){
@@ -6,6 +8,7 @@ export default class Car {
         this.spriteName = spriteName;
         this.wait = 0;
         this.zone = startZone;
+        this.zone.addCar(this);
         this.endZone = endZone;
         this.pathIndex = 0;
         this.path = null;
@@ -19,7 +22,7 @@ export default class Car {
             this.zone.node.x, 
             this.zone.node.y, 
             this.endZone.node.x, 
-            this.endZone.y
+            this.endZone.node.y
         );
         this.pathIndex = 0;
     }

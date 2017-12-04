@@ -8,18 +8,18 @@ export default class Zone {
         this.type = type;
         this.index = index;
         this.renderer = renderer;
-        this.renderer.addZone(this);
+        this.zoneRenderer = renderer.addZone(this);
         this.cars = new Set();
     }
 
     addCar(car){
         this.cars.add(car);
-        //TODO render code
+        this.zoneRenderer.addCar(car);
     }
 
     removeCar(car){
         this.cars.delete(car);
-        //TODO render code;
+        this.zoneRenderer.removeCar(car);
     }
 
     getScore(){
