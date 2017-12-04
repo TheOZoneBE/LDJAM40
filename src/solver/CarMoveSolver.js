@@ -1,4 +1,4 @@
-import CarQueue from './structures/CarQueue.js';
+import CarQueue from './../structures/CarQueue.js';
 
 export default class CarMoveSolver {
     static doCarMoves(network, cars){
@@ -11,11 +11,12 @@ export default class CarMoveSolver {
             //move car 
             var zone = next[0];
             var zoneCars = next[1];
-            while (zone.hasFreeSpace()){
-                var car = this.getFirstCar(zoneCars);
+            var car = this.getFirstCar(zoneCars);
+            while (car && zone.hasFreeSpace()){                
                 var from = car.getZone();
                 car.moveTo(zone);
                 carQueue.moveCar(car, from, car.getZone());
+                car = this.getFirstCar(zoneCars);
             }
             next = carQueue.getBestZone();
         }
@@ -31,7 +32,7 @@ export default class CarMoveSolver {
                 minCar = car;
             }
         });
-        return car;
+        return minCar;
 
     }
 }

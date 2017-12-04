@@ -1,11 +1,12 @@
 export default class RouteSolver {
     static shortestRoute(network, startX, startY, endX, endY){
+        console.log("calculating route: " + startX + ", " + startY + "->" + endX + ", " + endY);
         if (!network.getNode(startX, startY) || !network.getNode(endX, endY)){
             return null;
         }
         var start = network.getNode(startX, startY);
         var goal =  network.getNode(endX, endY);
-        
+
         // The set of nodes already evaluated
         var closedSet = new Set();
     
@@ -41,7 +42,7 @@ export default class RouteSolver {
             openSet.delete(current);
             closedSet.add(current);
     
-            current.getConnections().forEach(neigbor => {
+            current.getConnections().forEach(neighbor => {
                 if (closedSet.has(neighbor)){
                     return;		// Ignore the neighbor which is already evaluated.
                 }
@@ -93,7 +94,7 @@ export default class RouteSolver {
     static reconstructPath(cameFrom, current){
         var totalPath = [current];
         while (cameFrom.has(current)){
-            current = cameFrom[current];
+            current = cameFrom.get(current);
             totalPath.push(current);
         }
         return totalPath;

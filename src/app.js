@@ -5,6 +5,7 @@ import ZonesRenderer from "./renderer/ZonesRenderer.js";
 import DestinationRenderer from "./renderer/DestinationRenderer.js";
 import DestinationManager from "./structures/DestinationManager.js";
 import Car from "./structures/Car.js";
+import CarManager from "./structures/CarManager.js";
 
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
@@ -119,6 +120,7 @@ function create(){
 
 }
 
+var lastCarUpdate = (new Date).getTime()
 function update(){
 	if (mouseLeft.isDown){
 		if (game.input.y > 52){
@@ -176,7 +178,14 @@ function update(){
 			yDragPrev = game.input.y;
 		}
 	}
-	destinationManager.update();	
+	
+	var time = (new Date).getTime();
+	if (time - lastCarUpdate > 500){
+		lastCarUpdate = time;
+		carManager.update();
+		destinationManager.update();
+	}
+		
 }
 
 function resetXY(){

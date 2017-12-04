@@ -165,15 +165,15 @@ export default class NetworkNode {
     }
 
     getEntryZone(x, y){
-        this.zoneManager.entryMap[this.getIndex(x, y)];
+        return this.zoneManager.entryMap[this.getIndex(x, y)];
     }
 
     getTurnZone(x, y){
-        this.zoneManager.turnMap[this.getIndex(x, y)];
+        return this.zoneManager.turnMap[this.getIndex(x, y)];
     }
 
     getNextZone(zone){
-        this.zoneManager.zoneMap.get(zone);
+        return this.zoneManager.zoneMap.get(zone);
     }
 
     destroy(){

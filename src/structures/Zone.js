@@ -23,7 +23,7 @@ export default class Zone {
     }
 
     getScore(){
-        return this.cars.size / this.space;
+        return (this.space - this.cars.size) / this.space;
     }
 
     hasFreeSpace(){

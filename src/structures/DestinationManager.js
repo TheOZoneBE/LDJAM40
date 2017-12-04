@@ -1,17 +1,16 @@
 import Destination from "./Destination.js";
 
 export default class DestinationManager {
-    constructor(network, renderer, zoneRenderer, carManager){
+    constructor(network, renderer, carManager){
         this.network = network;
         this.renderer = renderer;
         this.destinations = new Map();
         this.destArray = []
         this.carManager = carManager;
-        this.zoneRenderer = zoneRenderer;
         this.id = 0;
         //TODO debug
-        var d1 = new Destination(network.getNode(0,0), 500, this);
-        var d2 = new Destination(network.getNode(3,0), 500, this);
+        var d1 = new Destination(network.getNode(0,0), 20, this);
+        var d2 = new Destination(network.getNode(3,0), 20, this);
         this.destinations.set(0, d1, this);
         this.destinations.set(3, d2, this);
         this.renderer.addDestination(d1);

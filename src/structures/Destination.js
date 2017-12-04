@@ -32,13 +32,12 @@ export default class Destination {
         this.cars.add(car);
     }
 
-    carArrive(){
-        if (this.spawnRate > 0) this.spawnRate--;
-    }
-
     //just act as zone
     addCar(car){
         this.manager.carManager.removeCar(car);
+        if (this.spawnRate > 0) {
+            this.spawnRate--;
+        }
     }
 
     removeCar(car){

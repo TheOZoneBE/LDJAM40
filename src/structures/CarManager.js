@@ -1,13 +1,13 @@
 import CarMoveSolver from './../solver/CarMoveSolver.js';
 
 export default class CarManager {
-    constructor(network)){
+    constructor(network){
         this.network = network;
         this.cars = new Set();
     }
 
     update(){
-        CarMoveSolver.doCarMoves(network, cars);
+        CarMoveSolver.doCarMoves(this.network, this.cars);
         this.cars.forEach(car => {
             car.updateWait();
         });
@@ -18,6 +18,6 @@ export default class CarManager {
     }
 
     removeCar(car){
-        this.cars.remove(car);
+        this.cars.delete(car);
     }
 }

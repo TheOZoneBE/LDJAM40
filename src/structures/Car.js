@@ -24,7 +24,7 @@ export default class Car {
             this.endDest.node.x, 
             this.endDest.node.y
         );
-        this.pathIndex = 0;
+        this.pathIndex = this.path.length - 1;
     }
 
     updateWait(){
@@ -35,9 +35,9 @@ export default class Car {
         //TODO if end return end zone
         if (this.path){            
             if(this.zone.type === 'exit'){
-                if (this.pathIndex + 2 < this.path.length){
+                if (this.pathIndex  > 1){
                     var dir = this.getNextDir();
-                    return this.getNextNode().getEntryZone(dir[0], dir[1]);
+                    return this.getNextNode().getEntryZone(-dir[0], -dir[1]);
                 }else {
                     return this.endDest;
                 }
@@ -61,16 +61,15 @@ export default class Car {
         
     }
 
-    getNextNode(){
-        
-        this.pathIndex++;
+    getNextNode(){        
+        this.pathIndex--;
         return this.path[this.pathIndex];
     }
 
     getNextDir(){
         var cur = this.path[this.pathIndex];
-        var next = this.path[this.pathIndex + 1];
-        return [next.x -cur.x,next.y - cur.y];
+        var next = this.path[this.pathIndex - 1];
+        return [next.x - cur.x, next.y -  cur.y];
     }
 
     getZone(){

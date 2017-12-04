@@ -18,7 +18,7 @@ export default class CarQueue {
             if (!this.scoreMap.has(to)){
                 this.scoreMap.set(to, to.getScore())
             }
-        }        
+        }
     }
 
     moveCar(car, from, to){
@@ -30,7 +30,7 @@ export default class CarQueue {
         else {
             this.scoreMap.set(to, to.getScore());
         }        
-        if (scoreMap.has(from)){
+        if (this.scoreMap.has(from)){
             this.scoreMap.set(from, from.getScore);
         }
     }
@@ -40,7 +40,7 @@ export default class CarQueue {
         //return key, value of zoneMap with biggest score
         var max = 0;
         var bestZone = null;
-        for(let zone in this.scoreMap.keys()){
+        for(let zone of this.scoreMap.keys()){
             if (this.scoreMap.get(zone) === 1){
                 bestZone = zone;
                 break;
@@ -52,7 +52,7 @@ export default class CarQueue {
             
         }
         if(bestZone){
-            return [bestZone, this.scoreMap[bestZone]];
+            return [bestZone, this.carMap.get(bestZone)];
         }  
         else {
             return null;
