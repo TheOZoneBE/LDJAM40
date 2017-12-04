@@ -34,7 +34,16 @@ var roadGroup, carGroup, UIGroup, destGroup;
 var zonesRenderer, destinationRenderer;
 var destinationManager, carManager;
 
+var music, addSound, remSound, upSound, downSound, alarmSound;
+
 function preload(){
+	game.load.audio('music', 'src/assets/LDJAM40.ogg');
+	game.load.audio('add_road_sound', 'src/assets/add_road.ogg');
+	game.load.audio('remove_road_sound', 'src/assets/remove_road.ogg');
+	game.load.audio('upgrade_road_sound', 'src/assets/upgrade_road.ogg');
+	game.load.audio('downgrade_road_sound', 'src/assets/downgrade_road.ogg');
+	game.load.audio('alarm_sound', 'src/assets/alarm.ogg');
+
 	game.load.image('small_middle', 'src/assets/small_middle.png');
 	game.load.image('small_left', 'src/assets/small_left.png');
 	game.load.image('small_right', 'src/assets/small_right.png');
@@ -62,6 +71,14 @@ function preload(){
 }
 
 function create(){
+	music = game.add.audio('music', 1,true);
+	addSound = game.add.audio('add_road_sound', 0.5, false);
+	remSound = game.add.audio('remove_road_sound', 0.5, false);
+	upSound = game.add.audio('upgrade_road_sound', 0.5, false);
+	downSound = game.add.audio('downgrade_road_sound', 0.5, false);
+	alarmSound = game.add.audio('alarm', 1 , false);
+	music.play();
+
 	
 	roadGroup = game.add.group();
 	//TODO update dest sprite
@@ -70,12 +87,15 @@ function create(){
 	carGroup = game.add.group();
 	UIGroup = game.add.group();
 	background = new Background(1280/64, 720/64, game, roadGroup);
-	topBar = game.add.graphics(0,0);
+	topBar = game.add.graphics(-2,-2);
 	topBar.beginFill(0x7a8699);
-	topBar.lineTo(1280,0);
-	topBar.lineTo(1280,52);
-	topBar.lineTo(0,52);
-	topBar.lineTo(0,0);
+	topBar.lineStyle(4, 0x6a7689, 1)
+	topBar.lineTo(1282,-2);
+	topBar.lineTo(1282,52);
+	topBar.lineTo(52,52);
+	topBar.lineTo(52,724);
+	topBar.lineTo(-2,724);
+	topBar.lineTo(-2,-2);
 	topBar.endFill();
 	UIGroup.add(topBar);
 
@@ -89,12 +109,6 @@ function create(){
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 	zonesRenderer = new ZonesRenderer(game, carGroup);
 	network = new Network(1280 / 64, 720/64, game, roadGroup, zonesRenderer);
-
-	//DEBUG
-	network.addRoad(0,0);
-	network.addRoad(1,0);
-	network.addRoad(2,0);
-	network.addRoad(3,0);
 
 	carManager = new CarManager();
 	destinationRenderer = new DestinationRenderer(game, destGroup);	
@@ -116,6 +130,7 @@ function create(){
 	upgrade = game.add.button(1234,10, 'upgrade_road',switchToUpgrade);
 	upgrade.fixedToCamera = true;
 	upgrade.smoothed = false;
+	upgrade.alpha= 0.5;
 	UIGroup.add(upgrade);
 
 }
@@ -128,11 +143,21 @@ function update(){
 			var y = Math.floor((game.input.y - yOffset)/ 64);
 			if (addMode){
 				if (!network.getNode(x, y)){
-					network.addRoad(x, y);
+					var stat = network.addRoad(x, y);
+					if(stat){
+						carManager.networkUpdate();
+						destinationManager.networkUpdate();
+						addSound.play();
+					}
 				}
 			}else {
 				if (network.getNode(x, y) && (x != xLast || y != yLast)){
-					network.upgradeRoad(x, y);
+					var stat = network.upgradeRoad(x, y);
+					if(stat){
+						carManager.networkUpdate();
+						destinationManager.networkUpdate();
+						upSound.play()
+					}
 				}
 			}
 			xLast = x;
@@ -145,11 +170,21 @@ function update(){
 			var y = Math.floor((game.input.y - yOffset) / 64);
 			if (addMode){
 				if (network.getNode(x, y)){
-					network.removeRoad(x, y);
+					var stat = network.removeRoad(x, y);
+					if(stat){
+						carManager.networkUpdate();
+						destinationManager.networkUpdate();
+						remSound.play();
+					}
 				}
 			}else {
 				if (network.getNode(x, y)&& (x != xLast || y != yLast)){
-					network.downgradeRoad(x, y);
+					var stat = network.downgradeRoad(x, y);
+					if(stat){
+						carManager.networkUpdate();
+						destinationManager.networkUpdate();
+						downSound.play();
+					}
 				}
 			}
 			xLast =x;
@@ -198,10 +233,14 @@ function resetDrag(){
 }
 
 function switchToAdd(){
+	add.alpha = 1;
+	upgrade.alpha = 0.5;
 	addMode = true;
 }
 
 function switchToUpgrade(){
+	add.alpha = 0.5;
+	upgrade.alpha = 1;
 	addMode = false;
 }
 

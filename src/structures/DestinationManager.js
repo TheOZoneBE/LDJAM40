@@ -7,20 +7,44 @@ export default class DestinationManager {
         this.destinations = new Map();
         this.destArray = []
         this.carManager = carManager;
+        this.maxTime = 100;
+        this.time = 50 + Math.floor(Math.random() * (this.maxTime));
         this.id = 0;
-        //TODO debug
-        var d1 = new Destination(network.getNode(0,0), 20, this);
-        var d2 = new Destination(network.getNode(3,0), 20, this);
-        this.destinations.set(0, d1, this);
-        this.destinations.set(3, d2, this);
-        this.renderer.addDestination(d1);
-        this.renderer.addDestination(d2);
-        this.destArray.push(d1);
-        this.destArray.push(d2);
+        this.init();        
+    }
+
+    init(){
+        this.spawnDestination();
+        this.spawnDestination();
+    }
+
+    networkUpdate(){
+        this.destArray.forEach(dest => {
+            dest.node = this.network.getNode(dest.x, dest.y);
+        });
+    }
+
+    spawnDestination(){
+        var x = Math.floor(Math.random() * this.network.width);
+        var y = Math.floor(Math.random() * this.network.height);
+        while (this.destinations.get(x + y * this.network.width)){
+            x = Math.floor(Math.random() * this.network.width);
+            y = Math.floor(Math.random() * this.network.height);
+        }
+        var dest = new Destination(x, y,this.network.getNode(x, y), 25, this);
+        this.destinations.set(x + y * this.network.width, dest);
+        this.renderer.addDestination(dest);
+        this.destArray.push(dest);
     }
 
     update(){
         //spawn new destinations
+        this.time--;
+        if (this.time === 0){
+            this.time = 25 + Math.floor(Math.random() * (this.maxTime - 25));
+            console.log("new dest, next -> " +this.time);
+            this.spawnDestination();
+        }
 
         for (let dest of this.destinations.values()){
             dest.update();

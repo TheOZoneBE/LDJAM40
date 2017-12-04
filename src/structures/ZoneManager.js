@@ -1,4 +1,5 @@
 import Zone from './Zone.js';
+import Destination from './Destination.js'
 
 export default class ZoneManager {
     constructor(node, zoneRenderer){
@@ -33,13 +34,60 @@ export default class ZoneManager {
         this.regenerateZones();
     }
 
-    getAllCars(){
+    resetAllCars(){
+        var cars = new Set();
+        if (this.entryMap[1]){
+            this.entryMap[1].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
+        if (this.entryMap[2]) {
+            this.entryMap[2].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
+        if (this.entryMap[3]) {
+            this.entryMap[3].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
+        if (this.entryMap[4]) {
+            this.entryMap[4].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
 
+        if (this.turnMap[1]) {
+            this.turnMap[1].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
+        if (this.turnMap[2]) {
+            this.turnMap[2].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
+        if (this.turnMap[3]) {
+            this.turnMap[3].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
+        if (this.turnMap[4]) {
+            this.turnMap[4].cars.forEach(car =>{
+                car.backToStart();
+            });
+        }
+
+        for (let zone of this.zoneMap.values()){
+            zone.cars.forEach(car => {
+                car.backToStart();
+            });
+        }       
     }
 
     reset(){
         //first get all cars and put in temporary destination zone
-        //TODO
+        this.resetAllCars();
         
         this.destroy();
 

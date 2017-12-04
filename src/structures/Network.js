@@ -33,22 +33,24 @@ export default class Network{
             var newNode = new NetworkNode(x, y, this);
             newNode.setOffset(this.xOffset, this.yOffset);
             this.setNode(x, y, newNode);
+            return true;
         }
-        
+        return false
     }
     
     removeRoad(x, y){
         var removeNode = this.getNode(x, y);
         this.setNode(x, y, null);
         removeNode.destroy();
+        return true;
     }
 
     upgradeRoad(x, y){
-        this.getNode(x, y).upgrade();
+        return this.getNode(x, y).upgrade();
     }
 
     downgradeRoad(x ,y){
-        this.getNode(x, y).downgrade();
+        return this.getNode(x, y).downgrade();
     }
 
     setNetworkOffset(xOffset, yOffset){

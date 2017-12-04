@@ -7,6 +7,7 @@ export default class Car {
         this.id = id;
         this.spriteName = spriteName;
         this.wait = 0;
+        this.startDest = startDest;
         this.zone = startDest;
         //this.zone.addCar(this);
         this.endDest = endDest;
@@ -19,12 +20,22 @@ export default class Car {
     calculatePath(){
         this.path = RouteSolver.shortestRoute(
             this.network, 
-            this.zone.node.x, 
-            this.zone.node.y, 
-            this.endDest.node.x, 
-            this.endDest.node.y
+            this.zone.x, 
+            this.zone.y, 
+            this.endDest.x, 
+            this.endDest.y
         );
-        this.pathIndex = this.path.length - 1;
+        if (this.path){
+            this.pathIndex = this.path.length - 1;
+        } 
+        else {
+            this.backToStart();
+        }       
+    }
+
+    backToStart(){
+        this.zone.removeCar(this);
+        this.zone = this.startDest;
     }
 
     updateWait(){
@@ -32,7 +43,6 @@ export default class Car {
     }
 
     getNextZone(){
-        //TODO if end return end zone
         if (this.path){            
             if(this.zone.type === 'exit'){
                 if (this.pathIndex  > 1){

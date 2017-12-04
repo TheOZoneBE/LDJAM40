@@ -122,7 +122,9 @@ export default class NetworkNode {
 
             //UPDATE ZONES
             this.zoneManager.upgrade();
+            return true;
         }        
+        return false;
     }
 
     downgrade(){
@@ -148,7 +150,9 @@ export default class NetworkNode {
 
             //UPDATE ZONES
             this.zoneManager.downgrade();
+            return true;
         }
+        return false;
     }
 
     setOffset(xOffset, yOffset){

@@ -32,7 +32,9 @@ export default class ZoneRenderer{
     removeCar(car){
         var index = this.carIndex.get(car);
         this.carIndex.delete(car);
-        this.carSprites[index].destroy();
+        if(this.carSprites[index]){
+            this.carSprites[index].destroy();
+        }        
         this.carSprites[index] = null;
     }
 
@@ -122,6 +124,7 @@ export default class ZoneRenderer{
     destroy(){
         for (let index of this.carIndex.values()){
             this.carSprites[index].destroy()
-        }      
+        }
+        this.carIndex.clear();      
     }
 }

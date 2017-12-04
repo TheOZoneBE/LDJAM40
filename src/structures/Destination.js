@@ -1,8 +1,9 @@
 import Car from './Car.js';
 
 export default class Destination {
-    constructor(node, spawnRate, manager){
-        this.node = node;
+    constructor(x, y,node, spawnRate, manager){
+        this.x = x;
+        this.y = y;
         this.manager = manager;
         this.spawnRate = spawnRate;
         this.timer = spawnRate;
@@ -56,8 +57,8 @@ export default class Destination {
         return this.node.getNextZone(this);
     }*/
 
-    getTurnZone(x, y){
-        return this.node.getTurnZone(x, y);
+    getTurnZone(x, y){        
+        return this.node.getTurnZone(x, y);    
     }
     
     destroy(){

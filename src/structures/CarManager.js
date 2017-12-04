@@ -13,6 +13,12 @@ export default class CarManager {
         });
     }
 
+    networkUpdate(){
+        this.cars.forEach(car => {
+            car.calculatePath()
+        })
+    }
+
     addCar(car){
         this.cars.add(car);
     }
