@@ -1,4 +1,4 @@
-import ZoneManager from './structures/ZoneManager.js';
+import ZoneManager from './ZoneManager.js';
 
 export default class NetworkNode {
     constructor(x, y, network){

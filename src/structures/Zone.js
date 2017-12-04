@@ -7,7 +7,7 @@ export default class Zone {
         this.nodeY = nodeY;
         this.type = type;
         this.index = index;
-        this.renderer = renderer:
+        this.renderer = renderer;
         this.renderer.addZone(this);
         this.cars = new Set();
     }
@@ -23,7 +23,7 @@ export default class Zone {
     }
 
     getScore(){
-        return this.cars.length / this.space;
+        return this.cars.size / this.space;
     }
 
     hasFreeSpace(){

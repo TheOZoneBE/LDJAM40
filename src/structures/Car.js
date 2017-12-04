@@ -1,8 +1,9 @@
 export default class Car {
     
-    constructor(network, startZone, endZone, id){
+    constructor(network, startZone, endZone, id, spriteName){
         this.network = network;
         this.id = id;
+        this.spriteName = spriteName;
         this.wait = 0;
         this.zone = startZone;
         this.endZone = endZone;

@@ -23,7 +23,7 @@ export default class CarQueue {
 
     moveCar(car, from, to){
         this.carMap.get(to).delete(car);
-        if (this.carMap.get(to).length == 0){
+        if (this.carMap.get(to).size == 0){
             this.carMap.delete(to);
             this.scoreMap.delete(to);
         }
@@ -40,19 +40,17 @@ export default class CarQueue {
         //return key, value of zoneMap with biggest score
         var max = 0;
         var bestZone = null;
-        var found = false;
-        this.scoreMap.keys().forEach(zone => {
-            if (!found){
-                if (this.scoreMap.get(zone) === 1){
-                    found = true;
-                    bestZone = zone;
-                }
-                else if (this.scoreMap.get(zone) > max){
-                    max = this.scoreMap.get(zone);
-                    bestZone = zone;
-                }
+        for(let zone in this.scoreMap.keys()){
+            if (this.scoreMap.get(zone) === 1){
+                bestZone = zone;
+                break;
             }
-        });
+            else if (this.scoreMap.get(zone) > max){
+                max = this.scoreMap.get(zone);
+                bestZone = zone;
+            }
+            
+        }
         if(bestZone){
             return [bestZone, this.scoreMap[bestZone]];
         }  

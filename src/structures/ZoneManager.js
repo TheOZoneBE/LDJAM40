@@ -1,12 +1,14 @@
+import Zone from './Zone.js';
+
 export default class ZoneManager {
     constructor(node, zoneRenderer){
         this.node = node;
         this.zoneRenderer = zoneRenderer;
         this.level = 1;
         this.dirs = new Set();
-        this.entryMap = null;
-        this.turnMap = null;
-        this.zoneMap = new Map();;
+        this.entryMap = [];
+        this.turnMap = [];
+        this.zoneMap = new Map();
     }
 
     getIndex(x, y){
@@ -14,7 +16,7 @@ export default class ZoneManager {
     }
 
     getDir(con){
-        return [con.x -node.x,con.y - node.y];
+        return [con.x -this.node.x,con.y - this.node.y];
     }
 
     addConnection(networkNode){
@@ -37,17 +39,20 @@ export default class ZoneManager {
 
     reset(){
         //first get all cars and put in temporary destination zone
-
-        //call all destroy on zoneRenderer
+        //TODO
         
+        this.destroy();
+
         //reset maps
+        this.entryMap = [];
+        this.turnMap = [];
+        this.zoneMap = new Map();       
     }
 
-
     //PLS DONT LOOK!
-    regenerateZones(){
-        
+    regenerateZones(){        
         this.reset();
+
         if (this.dirs.has(1)){
             if (this.level === 1){
                 var entry = new Zone(1, this.node, 7, 3, 'normal', 1,this.zoneRenderer);
@@ -192,7 +197,6 @@ export default class ZoneManager {
                 this.zoneMap.set(next2, exit);
             }
             else {
-                //TODO
                 var turn = new Zone(3, this.node, 1, 0, 'turn', 4,this.zoneRenderer);
                 this.entryMap[4] = turn;
                 var next1 = new Zone(9, this.node, 4,1, 'normal', 4,this.zoneRenderer);
@@ -214,6 +218,19 @@ export default class ZoneManager {
     }
 
     destroy(){
-        //TODO
+        //call all destroy on zoneRenderer
+        if (this.entryMap[1]) this.entryMap[1].destroy();
+        if (this.entryMap[2]) this.entryMap[2].destroy();
+        if (this.entryMap[3]) this.entryMap[3].destroy();
+        if (this.entryMap[4]) this.entryMap[4].destroy();
+
+        if (this.turnMap[1]) this.turnMap[1].destroy();
+        if (this.turnMap[2]) this.turnMap[2].destroy();
+        if (this.turnMap[3]) this.turnMap[3].destroy();
+        if (this.turnMap[4]) this.turnMap[4].destroy();
+
+        for (let zone of this.zoneMap.values()){
+            zone.destroy();
+        }        
     }
 }

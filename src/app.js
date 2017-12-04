@@ -1,6 +1,7 @@
 import Network from "./structures/Network.js";
 import NetworkNode from "./structures/NetworkNode.js";
 import Background from "./structures/Background.js";
+import ZonesRenderer from "./renderer/ZonesRenderer";
 
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
@@ -26,7 +27,7 @@ var topBar;
 
 var gameGroup, UIGroup;
 
-var zoneRenderer;
+var zonesRenderer;
 
 function preload(){
 	game.load.image('small_middle', 'src/assets/small_middle.png');
@@ -76,8 +77,8 @@ function create(){
 	game.input.mouse.mouseWheelCallback = mouseScroll;
 	*/
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
-	zoneRenderer = new ZoneRenderer(gameGroup);
-	network = new Network(1280 / 64, 720/64, game, gameGroup, zoneRenderer);
+	zonesRenderer = new ZonesRenderer(gameGroup);
+	network = new Network(1280 / 64, 720/64, game, gameGroup, zonesRenderer);
 
 	mouseLeft = game.input.activePointer.leftButton;
 	mouseRight = game.input.activePointer.rightButton;

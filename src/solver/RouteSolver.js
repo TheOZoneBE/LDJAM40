@@ -32,7 +32,7 @@ export default class RouteSolver {
         // For the first node, that value is completely heuristic.
         fScore[start] = estimateCost(start, goal);
     
-        while (openSet.length != 0){
+        while (openSet.size != 0){
             current = getLowest(fscore, openSet); //the node in openSet having the lowest fScore[] value
             if (current === goal){
                 return reconstructPath(cameFrom, current);
