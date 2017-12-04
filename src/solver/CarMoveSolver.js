@@ -12,7 +12,7 @@ export default class CarMoveSolver {
             var zone = next[0];
             var zoneCars = next[1];
             while (zone.hasFreeSpace()){
-                var car = getFirstCar(zoneCars);
+                var car = this.getFirstCar(zoneCars);
                 var from = car.getZone();
                 car.moveTo(zone);
                 carQueue.moveCar(car, from, car.getZone());
