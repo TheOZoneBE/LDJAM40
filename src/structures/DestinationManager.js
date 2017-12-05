@@ -10,6 +10,7 @@ export default class DestinationManager {
         this.maxTime = 100;
         this.time = 50 + Math.floor(Math.random() * (this.maxTime));
         this.id = 0;
+        this.score = 0;
         this.init();        
     }
 
@@ -62,6 +63,16 @@ export default class DestinationManager {
     nextId(){
         this.id++;
         return this.id
+    }
+
+    reset(){
+        this.renderer.reset();
+        this.destArray = [];
+        this.destinations = new Map();
+        this.id = 0;
+        this.score = 0;
+        this.time = 50 + Math.floor(Math.random() * (this.maxTime));
+        this.init();
     }
 
 

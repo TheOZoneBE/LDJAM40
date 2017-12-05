@@ -3,6 +3,8 @@ export default class Zone {
     constructor(space, node, nodeX, nodeY, type, index, renderer){
         this.space = space;
         this.node = node;
+        this.x = node.x;
+        this.y = node.y;
         this.nodeX = nodeX;
         this.nodeY = nodeY;
         this.type = type;
@@ -27,7 +29,7 @@ export default class Zone {
     }
 
     hasFreeSpace(){
-        return this.space > 0;
+        return this.cars.size < this.space;
     }
 
     getNextZone(){

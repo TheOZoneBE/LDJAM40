@@ -65,4 +65,16 @@ export default class Network{
             
         }
     }
+
+    reset(){
+        this.xOffset =0;
+        this.yOffset =0;
+        this.network.forEach(node => {
+            if (node){
+                node.destroy();
+            }            
+        });
+        this.network = [];
+        this.zoneRenderer.reset();
+    }
 }

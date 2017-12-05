@@ -86,6 +86,7 @@ export default class ZoneManager {
     }
 
     reset(){
+        
         //first get all cars and put in temporary destination zone
         this.resetAllCars();
         

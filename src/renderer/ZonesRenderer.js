@@ -28,4 +28,13 @@ export default class ZonesRenderer {
     removeZone(zone){
         this.zones.get(zone).destroy();
     }
+
+    reset(){
+        this.xOffset = 0;
+        this.yOffset = 0;
+        this.zones.forEach(zone => {
+            zone.destroy()
+        });
+        this.zones = new Map();
+    }
 }

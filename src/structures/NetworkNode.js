@@ -68,7 +68,6 @@ export default class NetworkNode {
     }
 
     addConnection(networkNode){
-        console.log(this.x + ", " + this.y + ": added: " + networkNode.x + ", " + networkNode.y);
         this.connections.add(networkNode);
         var dir = this.getDir(networkNode);
         
@@ -85,7 +84,6 @@ export default class NetworkNode {
     }
 
     removeConnection(networkNode){
-        console.log(this.x + ", " + this.y + ": removed: " + networkNode.x + ", " + networkNode.y);
         this.connections.delete(networkNode);
         var dir = this.getDir(networkNode);
         this.sprite[this.getIndex(dir[0], dir[1])].destroy();

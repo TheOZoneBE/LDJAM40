@@ -1,6 +1,6 @@
 export default class RouteSolver {
     static shortestRoute(network, startX, startY, endX, endY){
-        console.log("calculating route: " + startX + ", " + startY + "->" + endX + ", " + endY);
+        //console.log("calculating route: " + startX + ", " + startY + "->" + endX + ", " + endY);
         if (!network.getNode(startX, startY) || !network.getNode(endX, endY)){
             return null;
         }

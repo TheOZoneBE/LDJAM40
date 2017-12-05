@@ -28,6 +28,14 @@ export default class DestinationRenderer{
 
     removeDestination(destination){
         this.destinations.get(destination).destroy();
-        this.destinations.remove(destination);
+        this.destinations.delete(destination);
+    }
+
+    reset(){
+        this.xOffset = 0;
+        this.yOffset = 0;
+        for(let dest of this.destinations.keys()){
+            this.removeDestination(dest);
+        }
     }
 }

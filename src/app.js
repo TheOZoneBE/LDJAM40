@@ -28,13 +28,21 @@ var xDragPrev, yDragPrev;
 var start = true;
 var background;
 var topBar;
+var endBar;
 
-var roadGroup, carGroup, UIGroup, destGroup;
+var roadGroup, carGroup, UIGroup, destGroup, endGroup;
 
 var zonesRenderer, destinationRenderer;
 var destinationManager, carManager;
 
 var music, addSound, remSound, upSound, downSound, alarmSound;
+var textStyle, endStyle, btnStyle;
+var carAmount, scoreAmount, upAmount;
+var endText, endScore, endBottom;
+var tryAgain;
+var tryText;
+var end = false;
+var ups = 0;
 
 function preload(){
 	game.load.audio('music', 'src/assets/LDJAM40.ogg');
@@ -68,6 +76,12 @@ function preload(){
 	game.load.image('car2', 'src/assets/car2.png');
 	game.load.image('car3', 'src/assets/car3.png');
 	game.load.image('background', 'src/assets/background.png');
+	game.load.image('button', 'src/assets/button.png');
+
+	textStyle = { font: "bold 32px Tahoma, Geneva, sans-serif", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+	endStyle = { font: "bold 128px Tahoma, Geneva, sans-serif", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+	btnStyle =  { font: "bold 64px Tahoma, Geneva, sans-serif", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+	
 }
 
 function create(){
@@ -76,8 +90,10 @@ function create(){
 	remSound = game.add.audio('remove_road_sound', 0.5, false);
 	upSound = game.add.audio('upgrade_road_sound', 0.5, false);
 	downSound = game.add.audio('downgrade_road_sound', 0.5, false);
-	alarmSound = game.add.audio('alarm', 1 , false);
-	music.play();
+	alarmSound = game.add.audio('alarm_sound', 0.25 , false);
+
+	
+	//music.play();
 
 	
 	roadGroup = game.add.group();
@@ -86,7 +102,9 @@ function create(){
 	
 	carGroup = game.add.group();
 	UIGroup = game.add.group();
-	background = new Background(1280/64, 720/64, game, roadGroup);
+	endGroup = game.add.group();
+	carManager = new CarManager(alarmSound);
+	background = new Background(1280/64, 720/64, game, roadGroup, carManager);
 	topBar = game.add.graphics(-2,-2);
 	topBar.beginFill(0x7a8699);
 	topBar.lineStyle(4, 0x6a7689, 1)
@@ -99,6 +117,55 @@ function create(){
 	topBar.endFill();
 	UIGroup.add(topBar);
 
+	add = game.add.button(1192,10, 'add_road',switchToAdd);
+	add.fixedToCamera = true;
+	add.smoothed = false;
+	UIGroup.add(add);
+	upgrade = game.add.button(1234,10, 'upgrade_road',switchToUpgrade);
+	upgrade.fixedToCamera = true;
+	upgrade.smoothed = false;
+	upgrade.alpha= 0.5;
+	UIGroup.add(upgrade);
+
+
+	UIGroup.add(game.add.text(10,8, "Cars:", textStyle));
+	UIGroup.add(game.add.text(250,8, "Score:", textStyle));
+	UIGroup.add(game.add.text(510,8, "Upgrades:", textStyle));
+	carAmount = game.add.text(110,8, "0", textStyle);
+	scoreAmount = game.add.text(370,8, "0", textStyle);
+	upAmount = game.add.text(700,8, "0", textStyle);
+	UIGroup.add(carAmount);
+	UIGroup.add(scoreAmount);
+
+	endBar = game.add.graphics(0,0);
+	endBar.beginFill(0)
+	endBar.lineTo(1280, 0);
+	endBar.lineTo(1280,720);
+	endBar.lineTo(0, 720);
+	endBar.lineTo(0,0);
+	endBar.endFill();
+	endGroup.add(endBar);
+	endBar.alpha = 0.75;
+	//endBar.visible = false;
+	endText = game.add.text(0,0, "GAME OVER", endStyle);
+	endScore = game.add.text(0, 0, "0", endStyle);
+	endBottom = game.add.text(0, 0, "cars reached their destination", textStyle);
+	endText.setTextBounds(0, 50, 1280, 200);
+	endScore.setTextBounds(0, 200, 1280, 200);
+	endBottom.setTextBounds(0, 350, 1280, 100);
+	//endText.visible = false;
+	//endScore.visible = false;
+	//endBottom.visible = false;
+	endGroup.add(endText);
+	endGroup.add(endScore);
+	endGroup.add(endBottom);
+	tryAgain = game.add.button(440,480, 'button', tryAgain);
+	tryText = game.add.text(0,0, "AGAIN", btnStyle);
+	tryText.setTextBounds(440,480,400,200);
+	endGroup.add(tryAgain);
+	endGroup.add(tryText);
+	endGroup.visible = false;
+
 	game.stage.backgroundColor = "#66AACC";
 	/*
 	game.world.setBounds(-320, -180, 1600, 900);
@@ -110,7 +177,7 @@ function create(){
 	zonesRenderer = new ZonesRenderer(game, carGroup);
 	network = new Network(1280 / 64, 720/64, game, roadGroup, zonesRenderer);
 
-	carManager = new CarManager();
+	
 	destinationRenderer = new DestinationRenderer(game, destGroup);	
 	destinationManager = new DestinationManager(network, destinationRenderer, carManager);
 
@@ -123,20 +190,13 @@ function create(){
 	game.input.activePointer.middleButton.onUp.add(resetDrag, this);
 	
 
-	add = game.add.button(1192,10, 'add_road',switchToAdd);
-	add.fixedToCamera = true;
-	add.smoothed = false;
-	UIGroup.add(add);
-	upgrade = game.add.button(1234,10, 'upgrade_road',switchToUpgrade);
-	upgrade.fixedToCamera = true;
-	upgrade.smoothed = false;
-	upgrade.alpha= 0.5;
-	UIGroup.add(upgrade);
-
+	
 }
 
 var lastCarUpdate = (new Date).getTime()
+var lastUp = 0;
 function update(){
+	if (!end){
 	if (mouseLeft.isDown){
 		if (game.input.y > 52){
 			var x = Math.floor((game.input.x - xOffset) / 64);
@@ -152,12 +212,16 @@ function update(){
 				}
 			}else {
 				if (network.getNode(x, y) && (x != xLast || y != yLast)){
-					var stat = network.upgradeRoad(x, y);
-					if(stat){
-						carManager.networkUpdate();
-						destinationManager.networkUpdate();
-						upSound.play()
+					if (ups > 0){
+						var stat = network.upgradeRoad(x, y);
+						if(stat){
+							carManager.networkUpdate();
+							destinationManager.networkUpdate();
+							upSound.play()
+							ups--;
+						}
 					}
+					
 				}
 			}
 			xLast = x;
@@ -170,11 +234,13 @@ function update(){
 			var y = Math.floor((game.input.y - yOffset) / 64);
 			if (addMode){
 				if (network.getNode(x, y)){
+					var temp = network.getNode(x, y)
 					var stat = network.removeRoad(x, y);
 					if(stat){
 						carManager.networkUpdate();
 						destinationManager.networkUpdate();
 						remSound.play();
+						ups += temp.level - 1;
 					}
 				}
 			}else {
@@ -184,6 +250,7 @@ function update(){
 						carManager.networkUpdate();
 						destinationManager.networkUpdate();
 						downSound.play();
+						ups++;
 					}
 				}
 			}
@@ -219,6 +286,24 @@ function update(){
 		lastCarUpdate = time;
 		carManager.update();
 		destinationManager.update();
+		background.updateTints();
+		carAmount.text = "" + carManager.cars.size;
+		scoreAmount.text = "" + destinationManager.score;
+		if (destinationManager.score - lastUp > 10){
+			ups++;
+			lastUp+=10
+		}
+		if(carManager.checkAlarm()){
+			alarmSound.play();
+		}
+
+		upAmount.text = "" + ups;
+	}
+	if(carManager.checkEnd()){
+		endGroup.visible = true
+		end = true;
+		endScore.text = "" + destinationManager.score;
+	}
 	}
 		
 }
@@ -252,6 +337,19 @@ function mouseScroll(event){
 	}
 	scrollScale = Phaser.Math.clamp(scrollScale, 0.8, 3)
 	game.world.scale.set(scrollScale);
+}
+
+
+
+function tryAgain(){
+	xOffset = 0;
+	yOffset = 0;
+	endGroup.visible = false;
+	network.reset();
+	destinationManager.reset();
+	carManager.reset();
+	background.reset();
+	end = false;
 }
 
 function render(){

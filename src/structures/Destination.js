@@ -36,6 +36,7 @@ export default class Destination {
     //just act as zone
     addCar(car){
         this.manager.carManager.removeCar(car);
+        this.manager.score++;
         if (this.spawnRate > 0) {
             this.spawnRate--;
         }
@@ -58,10 +59,12 @@ export default class Destination {
     }*/
 
     getTurnZone(x, y){        
-        return this.node.getTurnZone(x, y);    
+        if (this.node){
+            return this.node.getTurnZone(x, y);    
+        }else {
+            return null;
+        }
+        
     }
-    
-    destroy(){
-        this.renderer.removeZone(this);
-    }
+
 }
