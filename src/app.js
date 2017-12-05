@@ -93,7 +93,7 @@ function create(){
 	alarmSound = game.add.audio('alarm_sound', 0.25 , false);
 
 	
-	//music.play();
+	music.play();
 
 	
 	roadGroup = game.add.group();
@@ -136,6 +136,7 @@ function create(){
 	upAmount = game.add.text(700,8, "0", textStyle);
 	UIGroup.add(carAmount);
 	UIGroup.add(scoreAmount);
+	UIGroup.add(upAmount);
 
 	endBar = game.add.graphics(0,0);
 	endBar.beginFill(0)
@@ -350,6 +351,7 @@ function tryAgain(){
 	carManager.reset();
 	background.reset();
 	end = false;
+	ups = 0;
 }
 
 function render(){

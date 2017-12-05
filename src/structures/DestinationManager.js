@@ -43,7 +43,6 @@ export default class DestinationManager {
         this.time--;
         if (this.time === 0){
             this.time = 25 + Math.floor(Math.random() * (this.maxTime - 25));
-            console.log("new dest, next -> " +this.time);
             this.spawnDestination();
         }
 

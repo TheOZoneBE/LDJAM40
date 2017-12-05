@@ -31,7 +31,7 @@ export default class CarManager {
     checkAlarm(){
         var ret = false
         this.cars.forEach(car => {
-            if (car.wait > 20){
+            if (car.wait > 15){
                 ret = true;
             }
         });
