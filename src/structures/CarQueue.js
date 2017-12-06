@@ -19,6 +19,7 @@ export default class CarQueue {
                 this.scoreMap.set(to, to.getScore())
             }
         }
+
     }
 
     moveCar(car, from, to){
@@ -31,7 +32,7 @@ export default class CarQueue {
             this.scoreMap.set(to, to.getScore());
         }        
         if (this.scoreMap.has(from)){
-            this.scoreMap.set(from, from.getScore);
+            this.scoreMap.set(from, from.getScore());
         }
     }
 

@@ -7,8 +7,8 @@ export default class DestinationManager {
         this.destinations = new Map();
         this.destArray = []
         this.carManager = carManager;
-        this.maxTime = 100;
-        this.time = 50 + Math.floor(Math.random() * (this.maxTime));
+        this.maxTime = 90;
+        this.time = 30 + Math.floor(Math.random() * (this.maxTime));
         this.id = 0;
         this.score = 0;
         this.init();        
@@ -36,12 +36,13 @@ export default class DestinationManager {
         this.destinations.set(x + y * this.network.width, dest);
         this.renderer.addDestination(dest);
         this.destArray.push(dest);
+        this.networkUpdate();
     }
 
     update(){
         //spawn new destinations
         this.time--;
-        if (this.time === 0){
+        if (this.time === 0 && this.destArray.length < (this.network.width * this.network.height) / 3){
             this.time = 25 + Math.floor(Math.random() * (this.maxTime - 25));
             this.spawnDestination();
         }
@@ -53,7 +54,7 @@ export default class DestinationManager {
 
     getRandomDestination(destination){
         var rand = this.destArray[Math.floor(Math.random() * this.destArray.length)];
-        while (rand ===  destination){
+        while (rand.x === destination.x && rand.y === destination.y){
             rand = this.destArray[Math.floor(Math.random() * this.destArray.length)]
         }
         return rand;

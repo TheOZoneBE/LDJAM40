@@ -7,7 +7,7 @@ import DestinationManager from "./structures/DestinationManager.js";
 import Car from "./structures/Car.js";
 import CarManager from "./structures/CarManager.js";
 
-var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
+var game = new Phaser.Game(1268, 692, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
 var network;
 var mouseLeft;
@@ -21,8 +21,8 @@ var addMode = true;
 
 var xLast, yLast;
 
-var xOffset = 0;
-var yOffset = 0;
+var xOffset = 50;
+var yOffset = 50;
 var scrollScale = 1;
 var xDragPrev, yDragPrev;
 var start = true;
@@ -104,7 +104,7 @@ function create(){
 	UIGroup = game.add.group();
 	endGroup = game.add.group();
 	carManager = new CarManager(alarmSound);
-	background = new Background(1280/64, 720/64, game, roadGroup, carManager);
+	background = new Background(19, 10,  game, roadGroup, carManager);
 	topBar = game.add.graphics(-2,-2);
 	topBar.beginFill(0x7a8699);
 	topBar.lineStyle(4, 0x6a7689, 1)
@@ -117,11 +117,11 @@ function create(){
 	topBar.endFill();
 	UIGroup.add(topBar);
 
-	add = game.add.button(1192,10, 'add_road',switchToAdd);
+	add = game.add.button(1182,10, 'add_road',switchToAdd);
 	add.fixedToCamera = true;
 	add.smoothed = false;
 	UIGroup.add(add);
-	upgrade = game.add.button(1234,10, 'upgrade_road',switchToUpgrade);
+	upgrade = game.add.button(1222,10, 'upgrade_road',switchToUpgrade);
 	upgrade.fixedToCamera = true;
 	upgrade.smoothed = false;
 	upgrade.alpha= 0.5;
@@ -151,18 +151,18 @@ function create(){
 	endText = game.add.text(0,0, "GAME OVER", endStyle);
 	endScore = game.add.text(0, 0, "0", endStyle);
 	endBottom = game.add.text(0, 0, "cars reached their destination", textStyle);
-	endText.setTextBounds(0, 50, 1280, 200);
-	endScore.setTextBounds(0, 200, 1280, 200);
-	endBottom.setTextBounds(0, 350, 1280, 100);
+	endText.setTextBounds(0, 50, 1268, 200);
+	endScore.setTextBounds(0, 200, 1268, 200);
+	endBottom.setTextBounds(0, 350, 1268, 100);
 	//endText.visible = false;
 	//endScore.visible = false;
 	//endBottom.visible = false;
 	endGroup.add(endText);
 	endGroup.add(endScore);
 	endGroup.add(endBottom);
-	tryAgain = game.add.button(440,480, 'button', tryAgain);
+	tryAgain = game.add.button(440,440, 'button', tryAgain);
 	tryText = game.add.text(0,0, "AGAIN", btnStyle);
-	tryText.setTextBounds(440,480,400,200);
+	tryText.setTextBounds(440,440,400,200);
 	endGroup.add(tryAgain);
 	endGroup.add(tryText);
 	endGroup.visible = false;
@@ -176,7 +176,7 @@ function create(){
 	*/
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 	zonesRenderer = new ZonesRenderer(game, carGroup);
-	network = new Network(1280 / 64, 720/64, game, roadGroup, zonesRenderer);
+	network = new Network(19, 10, game, roadGroup, zonesRenderer);
 
 	
 	destinationRenderer = new DestinationRenderer(game, destGroup);	
@@ -190,12 +190,17 @@ function create(){
 	game.input.activePointer.rightButton.onUp.add(resetXY, this);
 	game.input.activePointer.middleButton.onUp.add(resetDrag, this);
 	
-
+	network.setNetworkOffset(xOffset, yOffset);
+	background.setOffset(xOffset, yOffset);
+	zonesRenderer.setOffset(xOffset, yOffset);
+	destinationRenderer.setOffset(xOffset, yOffset);
+	
 	
 }
 
 var lastCarUpdate = (new Date).getTime()
 var lastUp = 0;
+var upsAmount = 2;
 function update(){
 	if (!end){
 	if (mouseLeft.isDown){
@@ -260,6 +265,8 @@ function update(){
 		}		
 	}
 	if (mouseMiddle.isDown){
+		//temp disable until scaling is implemented
+		/*
 		if(start){
 			xDragPrev = game.input.x;
 			yDragPrev = game.input.y;
@@ -279,20 +286,21 @@ function update(){
 
 			xDragPrev = game.input.x;
 			yDragPrev = game.input.y;
-		}
+		}*/
 	}
 	
 	var time = (new Date).getTime();
-	if (time - lastCarUpdate > 500){
+	if (time - lastCarUpdate > 350){
 		lastCarUpdate = time;
 		carManager.update();
 		destinationManager.update();
 		background.updateTints();
 		carAmount.text = "" + carManager.cars.size;
 		scoreAmount.text = "" + destinationManager.score;
-		if (destinationManager.score - lastUp > 10){
+		if (destinationManager.score - lastUp > upsAmount){
 			ups++;
-			lastUp+=10
+			lastUp+=upsAmount;
+			upsAmount+=Math.floor(lastUp / upsAmount);			
 		}
 		if(carManager.checkAlarm()){
 			alarmSound.play();
@@ -343,8 +351,6 @@ function mouseScroll(event){
 
 
 function tryAgain(){
-	xOffset = 0;
-	yOffset = 0;
 	endGroup.visible = false;
 	network.reset();
 	destinationManager.reset();

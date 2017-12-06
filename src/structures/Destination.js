@@ -37,7 +37,7 @@ export default class Destination {
     addCar(car){
         this.manager.carManager.removeCar(car);
         this.manager.score++;
-        if (this.spawnRate > 0) {
+        if (this.spawnRate > 1) {
             this.spawnRate--;
         }
     }
